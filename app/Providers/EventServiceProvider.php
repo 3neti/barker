@@ -2,12 +2,14 @@
 
 namespace App\Providers;
 
-use App\Listeners\JoinTeam;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Event;
+use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
+use Bavix\Wallet\Internal\Events\BalanceUpdatedEventInterface;
 use Junges\InviteCodes\Events\InviteRedeemedEvent;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\Event;
+use App\Listeners\TempListener;
+use App\Listeners\JoinTeam;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -22,6 +24,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         InviteRedeemedEvent::class => [
             JoinTeam::class
+        ],
+        BalanceUpdatedEventInterface::class => [
+            TempListener::class
         ],
     ];
 

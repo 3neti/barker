@@ -49,9 +49,15 @@ class HandleInertiaRequests extends Middleware
                     $user->currentTeam;
                 }
 
-                return array_merge($user->toArray(), array_filter([
-                    'teams' => $userHasTeamFeatures ? $user->teams->values() : null,
-                ]));
+                return array_merge($user->toArray(), array_filter(
+                    [
+                        'teams' => $userHasTeamFeatures ? $user->teams->values() : null,
+                    ],
+                   ),
+                    [
+                        'balanceFloat' => $user->balanceFloat
+                    ]
+                );
             }
         ]);
     }

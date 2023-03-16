@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\{DB, Hash};
 use App\Actions\Jetstream\CreateTeam;
 use Illuminate\Database\Seeder;
 use App\Models\User;
-use Illuminate\Support\Arr;
 
 class TeamSeeder extends Seeder
 {
@@ -28,6 +27,7 @@ class TeamSeeder extends Seeder
                 $user->ownedTeams()->save($team);
                 $team->users()->attach($user, ['role' => config('domain.seeds.user.system.role')]);
                 $user->switchTeam($team);
+                $user->depositFloat(10000000);
             });
         });
     }

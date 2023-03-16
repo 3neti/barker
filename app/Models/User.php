@@ -2,24 +2,27 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Bavix\Wallet\Traits\{CanConfirm, HasWallet, HasWalletFloat, HasWallets};
+use Bavix\Wallet\Interfaces\{Confirmable, Wallet, WalletFloat};
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use Illuminate\Notifications\Notifiable;
 use Laravel\Jetstream\HasProfilePhoto;
-use Laravel\Jetstream\HasTeams;
 use Laravel\Sanctum\HasApiTokens;
 use Laravel\Jetstream\Jetstream;
+use Laravel\Jetstream\HasTeams;
 
-class User extends Authenticatable
+class User extends Authenticatable implements Confirmable, Wallet, WalletFloat
 {
-    use HasApiTokens;
-    use HasFactory;
-    use HasProfilePhoto;
-    use HasTeams;
-    use Notifiable;
+    use HasWallet, CanConfirm, HasWallets, HasWalletFloat;
     use TwoFactorAuthenticatable;
+    use HasProfilePhoto;
+    use HasApiTokens;
+    use Notifiable;
+    use HasFactory;
+    use HasTeams;
 
     /**
      * The attributes that are mass assignable.
@@ -60,8 +63,8 @@ class User extends Authenticatable
         'profile_photo_url',
     ];
 
-    public function system(): ?self
+    public function system(): self
     {
-        return static::where('email', 'lester@hurtado.ph')->first();
+        return Jetstream::findUserByEmailOrFail(config('domain.seeds.user.system.email'));
     }
 }
