@@ -27,7 +27,7 @@ class TeamSeeder extends Seeder
                 $user->ownedTeams()->save($team);
                 $team->users()->attach($user, ['role' => config('domain.seeds.user.system.role')]);
                 $user->switchTeam($team);
-                $user->depositFloat(10000000);
+                $user->depositFloat(config('domain.seeds.wallet.default'), ['message' => 'initial deposit', 'from' => 'system'], 1);
             });
         });
     }

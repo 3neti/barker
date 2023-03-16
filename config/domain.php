@@ -16,5 +16,8 @@ return [
                 'name' => env('DOMAIN_DEFAULT_TEAM_NAME',  'General Membership'),
             ],
         ],
+        'wallet' => [
+            'default' => env('DOMAIN_DEFAULT_WALLET_BALANCE', 10000000),
+        ],
     ],
 ];
