@@ -31,7 +31,7 @@ defineProps({
                     :user-permissions="permissions"
                 />
 
-                <template v-if="permissions.canDeleteTeam && ! team.personal_team">
+                                                <template v-if="permissions.canDeleteTeam && ! team.personal_team">
                     <SectionBorder />
 
                     <DeleteTeamForm class="mt-10 sm:mt-0" :team="team" />

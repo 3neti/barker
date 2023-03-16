@@ -83,9 +83,9 @@ const logout = () => {
                                                     Team Settings
                                                 </DropdownLink>
 
-                                                <DropdownLink v-if="$page.props.jetstream.canCreateTeams" :href="route('teams.create')">
-                                                    Create New Team
-                                                </DropdownLink>
+<!--                                                <DropdownLink v-if="$page.props.jetstream.canCreateTeams" :href="route('teams.create')">-->
+<!--                                                    Create New Team-->
+<!--                                                </DropdownLink>-->
 
                                                 <div class="border-t border-gray-200 dark:border-gray-600" />
 
@@ -94,7 +94,8 @@ const logout = () => {
                                                     Switch Teams
                                                 </div>
 
-                                                <template v-for="team in $page.props.auth.user.all_teams" :key="team.id">
+<!--                                                <template v-for="team in $page.props.auth.user.all_teams" :key="team.id">-->
+                                                <template v-for="team in $page.props.auth.user.teams" :key="team.id">
                                                     <form @submit.prevent="switchToTeam(team)">
                                                         <DropdownLink as="button">
                                                             <div class="flex items-center">

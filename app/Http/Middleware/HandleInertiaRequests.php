@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
 use Inertia\Middleware;
+use Laravel\Jetstream\Jetstream;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -37,7 +38,21 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         return array_merge(parent::share($request), [
-            //
+            'auth.user' => function () use ($request) {
+                if (! $user = $request->user()) {
+                    return;
+                }
+
+                $userHasTeamFeatures = Jetstream::userHasTeamFeatures($user);
+
+                if ($user && $userHasTeamFeatures) {
+                    $user->currentTeam;
+                }
+
+                return array_merge($user->toArray(), array_filter([
+                    'teams' => $userHasTeamFeatures ? $user->teams->values() : null,
+                ]));
+            }
         ]);
     }
 }

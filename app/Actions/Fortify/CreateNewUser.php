@@ -2,6 +2,7 @@
 
 namespace App\Actions\Fortify;
 
+use App\Actions\Jetstream\AddTeamMember;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -23,10 +24,12 @@ class CreateNewUser implements CreatesNewUsers
     {
         Validator::make($input, [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users', 'exists:invites,to'],
+            'invite_code' => ['required', 'string', 'min:3', 'max:125','exists:invites,code'],
             'password' => $this->passwordRules(),
             'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature() ? ['accepted', 'required'] : '',
         ])->validate();
+
 
         return DB::transaction(function () use ($input) {
             return tap(User::create([
@@ -34,7 +37,7 @@ class CreateNewUser implements CreatesNewUsers
                 'email' => $input['email'],
                 'password' => Hash::make($input['password']),
             ]), function (User $user) {
-                $this->createTeam($user);
+                $this->attachToDefaultTeam($user);
             });
         });
     }
@@ -49,5 +52,13 @@ class CreateNewUser implements CreatesNewUsers
             'name' => explode(' ', $user->name, 2)[0]."'s Team",
             'personal_team' => true,
         ]));
+    }
+
+    protected function attachToDefaultTeam(User $user): void
+    {
+        if (($system = app(User::class)->system()) && ($default = app(Team::class)->default())) {
+            app(AddTeamMember::class)->add($system, $default, $user->email, 'agent');
+            $user->switchTeam($default);
+        }
     }
 }

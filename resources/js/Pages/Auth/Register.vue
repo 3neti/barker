@@ -14,6 +14,7 @@ const form = useForm({
     password: '',
     password_confirmation: '',
     terms: false,
+    invite_code: '',
 });
 
 const submit = () => {
@@ -83,6 +84,20 @@ const submit = () => {
                     autocomplete="new-password"
                 />
                 <InputError class="mt-2" :message="form.errors.password_confirmation" />
+            </div>
+
+            <div>
+                <InputLabel for="invite_code" value="Invite Code" />
+                <TextInput
+                    id="invite_code"
+                    v-model="form.invite_code"
+                    type="text"
+                    class="mt-1 block w-full"
+                    required
+                    autofocus
+                    autocomplete="invite_code"
+                />
+                <InputError class="mt-2" :message="form.errors.invite_code" />
             </div>
 
             <div v-if="$page.props.jetstream.hasTermsAndPrivacyPolicyFeature" class="mt-4">
