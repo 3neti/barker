@@ -1,7 +1,9 @@
 <script setup>
+import relativeTime from 'dayjs/plugin/relativeTime';
+import { router, usePage } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Welcome from '@/Components/Welcome.vue';
-import { router, usePage } from '@inertiajs/vue3';
+import dayjs from 'dayjs';
 
 const formatter = new Intl.NumberFormat('en-PH', {
     style: 'currency',
@@ -15,15 +17,16 @@ Echo.private(`wallet.holder.${page.props.auth.user.id}`)
         router.get('/dashboard')
     })
 
+dayjs.extend(relativeTime);
 </script>
 
 <template>
     <AppLayout title="Dashboard">
-        {{ $page.props.auth.user.id }}
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 {{ formatter.format($page.props.auth.user.balanceFloat) }}
             </h2>
+            <h3 class="font-sans text-sm text-gray-800 dark:text-gray-200 leading-tight">{{ dayjs($page.props.auth.user.balanceUpdatedAt).fromNow() }}</h3>
         </template>
 
         <div class="py-12">

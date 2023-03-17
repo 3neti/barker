@@ -55,7 +55,8 @@ class HandleInertiaRequests extends Middleware
                     ],
                    ),
                     [
-                        'balanceFloat' => $user->balanceFloat
+                        'balanceFloat' => $user->getWallet('default')->balanceFloat,
+                        'balanceUpdatedAt' => $user->getWallet('default')->updated_at
                     ]
                 );
             }

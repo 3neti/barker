@@ -6,13 +6,17 @@ use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvi
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Bavix\Wallet\Internal\Events\BalanceUpdatedEventInterface;
 use Junges\InviteCodes\Events\InviteRedeemedEvent;
+use App\Listeners\{TempListener, JoinTeam};
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Support\Facades\Event;
-use App\Listeners\TempListener;
-use App\Listeners\JoinTeam;
+use App\Observers\UserObserver;
+use App\Models\User;
 
 class EventServiceProvider extends ServiceProvider
 {
+    protected $observers = [
+        User::class => [UserObserver::class],
+    ];
+
     /**
      * The event to listener mappings for the application.
      *

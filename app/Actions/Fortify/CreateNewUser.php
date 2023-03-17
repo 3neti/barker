@@ -2,14 +2,11 @@
 
 namespace App\Actions\Fortify;
 
-use App\Actions\Jetstream\AddTeamMember;
-use App\Models\Team;
-use App\Models\User;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\{DB, Hash, Validator};
 use Laravel\Fortify\Contracts\CreatesNewUsers;
+use App\Actions\Jetstream\AddTeamMember;
 use Laravel\Jetstream\Jetstream;
+use App\Models\{Team, User};
 
 class CreateNewUser implements CreatesNewUsers
 {
@@ -29,7 +26,6 @@ class CreateNewUser implements CreatesNewUsers
             'password' => $this->passwordRules(),
             'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature() ? ['accepted', 'required'] : '',
         ])->validate();
-
 
         return DB::transaction(function () use ($input) {
             return tap(User::create([

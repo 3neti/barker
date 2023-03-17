@@ -1,5 +1,8 @@
 <?php
 
+use Laravel\Fortify\Rules\Password;
+use Laravel\Jetstream\Jetstream;
+
 return [
     'seeds' => [
         'user' => [
@@ -11,10 +14,9 @@ return [
                 'role' => env('DOMAIN_SYSTEM_USER_ROLE', 'admin'),
             ],
         ],
-        'team' => [
-            'default' => [
-                'name' => env('DOMAIN_DEFAULT_TEAM_NAME',  'General Membership'),
-            ],
+        'teams' => [
+            'default' => env('DOMAIN_DEFAULT_TEAM_NAME',  'General Membership'),
+            'standby' => env('DOMAIN_STANDBY_TEAM_NAME',  'Standby'),
         ],
         'wallet' => [
             'default' => env('DOMAIN_DEFAULT_WALLET_BALANCE', 10000000),

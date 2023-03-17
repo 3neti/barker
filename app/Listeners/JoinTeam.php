@@ -22,7 +22,12 @@ class JoinTeam implements ShouldQueue
 
     protected function setParameters(InviteRedeemedEvent $event): self
     {
-        $user = User::findOrFail($event->invite->data->from_id);
+        try {
+            $user = User::findOrFail($event->invite->data->from_id);
+        }
+        catch (\Exception $exception) {
+            $user = app(User::class)->system();
+        }
         $team = Team::where('id', $event->invite->data->team_id)->firstOrFail();
         $email = $event->invite->to;
         $role = $event->invite->data->role;

@@ -12,7 +12,7 @@ class TopupUserWallet
 {
     use AsAction;
 
-    public function handle(User $destination, float $amount, $slug = 'default', $meta = ['transaction' => 'topup'])
+    public function handle(User $destination, float $amount, string $slug = 'default', $meta = ['transaction' => 'topup'])
     {
         tap(app(User::class)->system()->getWallet($slug), function ($system_wallet) use ($destination, $amount, $slug, $meta) {
             $system_wallet->transferFloat(
@@ -29,5 +29,10 @@ class TopupUserWallet
                     )
                 ));
         });
+    }
+
+    protected function asJob(User $destination, float $amount, string $slug = 'default', $meta = ['transaction' => 'topup'])
+    {
+        $this->handle($destination, $amount, $slug, $meta);
     }
 }

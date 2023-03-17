@@ -33,3 +33,5 @@ Route::middleware([
         return Inertia::render('Dashboard');
     })->name('dashboard');
 });
+
+Route::webhooks('webhook-paynamics-paybiz', 'paynamics-paybiz');

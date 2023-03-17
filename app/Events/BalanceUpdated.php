@@ -35,6 +35,10 @@ final class BalanceUpdated implements BalanceUpdatedEventInterface, ShouldBroadc
 
     public function broadcastWith(): array
     {
-        return ['balanceFloat' => $this->getBalanceFloat()];
+        return [
+            'walletId' => $this->getWalletId(),
+            'balanceFloat' => $this->getBalanceFloat(),
+            'updatedAt' => $this->getUpdatedAt()->format('Y-m-d H:i:s')
+        ];
     }
 }
