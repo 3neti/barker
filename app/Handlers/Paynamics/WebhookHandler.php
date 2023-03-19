@@ -4,88 +4,85 @@ namespace App\Handlers\Paynamics;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Spatie\WebhookClient\Jobs\ProcessWebhookJob;
-use App\Actions\{RegisterUser, TopupUserWallet};
-use App\Models\{Invite, Team, User};
+use Illuminate\Validation\ValidationException;
+use App\Actions\Webhook\UpdateUserWallet;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Pipeline\Pipeline;
-use Laravel\Jetstream\Jetstream;
 use App\Classes\InviteCodes;
 use Illuminate\Support\Arr;
+use App\Models\Team;
+use App\Actions\{
+    RegisterUser,
+    Webhook\AssignUserTeam,
+    Webhook\ResetUserPassword};
 
 class WebhookHandler extends ProcessWebhookJob
 {
     const NO_SESSIONS = false;
 
-    const DEFAULT_USER_WALLET = 'default';
-
     public int $timeout = 120;
-
-    protected User $user;
 
     public function handle()
     {
-        /** get customer attributes from webhook payload */
-        $attribs = Arr::get($this->webhookCall, 'payload.customer_info');
-
-        /** check if user exists */
+        /** if user exists, update wallet */
         try {
-            $this->setUser(Jetstream::findUserByEmailOrFail($email = Arr::get($attribs, 'email')));
+            $attribs = Arr::get($this->webhookCall, 'payload.customer_info');
+            UpdateUserWallet::dispatch($attribs);
         }
-        catch (ModelNotFoundException $exception) {
-            /** generate invite code for attachment to "Standby Team"  */
-            $invite = $this->generateInvite($email);
-
-            /** process and clean attributes, include invite code in attribs */
-            $attribs = $this->processAttribs($attribs, $invite->code);
-
+        catch (ValidationException $exception) {
+            $attribs = $this->getAttribs();
             /** persist user from attributes */
-            $this->user = RegisterUser::run($attribs, self::NO_SESSIONS);
+            Bus::chain([
+                RegisterUser::makeJob($attribs, self::NO_SESSIONS),
+                ResetUserPassword::makeJob($attribs),
+                AssignUserTeam::makeJob($attribs),
+                UpdateUserWallet::makeJob($attribs),
+            ])->dispatch();
         }
         catch (\Exception $exception) {
             dd('Check this out! ' . self::class . ' ' .  $exception->getMessage());
         }
-        finally {
-            /** credit amount to user wallet */
-            TopupUserWallet::run($this->user, $attribs['amount'], self::DEFAULT_USER_WALLET, [
-                'deposit' => ['to' => 'user credits'],
-                'withdraw' => ['from' => 'Paynamics']
-            ]);
-        }
     }
 
-    protected function setUser(User $user): self
+    protected function getAttribs(): array
     {
-        $this->user = $user;
+        /** get customer attributes from webhook payload */
+        $attribs = Arr::get($this->webhookCall, 'payload.customer_info');
 
-        return $this;
-    }
-
-    protected function getStandbyTeam(): Team
-    {
-        return app(Team::class)->find(2);
-    }
-
-    protected function generateInvite(string $email): Invite
-    {
-        return app(InviteCodes::class)->create()
-            ->restrictUsageTo($email)
-            ->setTeam($this->getStandbyTeam())
-            ->save();
-    }
-
-    protected function processAttribs($attribs, $inviteCode): array
-    {
         return app(Pipeline::class)->send($attribs)
             ->through(
-                function ($attribs, $next) use ($inviteCode) {
-                    /** add necessary key value pairs to attributes */
-                    Arr::set($attribs, 'invite_code', $inviteCode);
-                    Arr::set($attribs, 'password', '#Password1');
-                    Arr::set($attribs, 'password_confirmation', '#Password1');
+                /** generate invite code for attachment to "Standby Team"  */
+                function ($attribs, $next) {
+                    $email = Arr::get($attribs, 'email');
+                    $invite = app(InviteCodes::class)
+                        ->create()
+                        ->restrictUsageTo($email)
+                        ->setTeam(app(Team::class)->default())
+                        ->save();
+                    Arr::set($attribs, 'invite_code', $invite->code);
 
                     return $next($attribs);
                 },
-                function ($attribs, $next) use ($inviteCode) {
-                    /** clean data - remove multiple white spaces */
+                /** capture team name from sender name */
+                function ($attribs, $next) {
+                    $text = $attribs['name'];
+                    if (preg_match("/(?<name>.*\b).*\((?<team>.*)\)/", $text, $matches)) {
+                        $attribs['name'] = $matches['name'];
+                        $attribs['team'] = $matches['team'];
+                    }
+
+                    return $next($attribs);
+                },
+                /** add necessary key value pairs to attributes */
+                function ($attribs, $next) {
+                    $password = Arr::get($attribs, 'invite_code');
+                    Arr::set($attribs, 'password',  $password);
+                    Arr::set($attribs, 'password_confirmation',  $password);
+
+                    return $next($attribs);
+                },
+                /** clean data - remove multiple white spaces */
+                function ($attribs, $next) {
                     foreach ($attribs as $key => $value) {
                         $attribs[$key] = trim(preg_replace('/\s+/', ' ', $value));
                     }

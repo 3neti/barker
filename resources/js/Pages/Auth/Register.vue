@@ -1,5 +1,5 @@
 <script setup>
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm, router } from '@inertiajs/vue3';
 import AuthenticationCard from '@/Components/AuthenticationCard.vue';
 import AuthenticationCardLogo from '@/Components/AuthenticationCardLogo.vue';
 import Checkbox from '@/Components/Checkbox.vue';
@@ -8,14 +8,27 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 
+let params = new URLSearchParams(window.location.search);
+
+function getNameFromEmail(email) {
+    if (email) {
+        name = email?.split('@')[0];
+        return name.charAt(0).toUpperCase() + name.slice(1);
+    }
+
+    return '';
+}
+
 const form = useForm({
-    name: '',
-    email: '',
-    password: '',
-    password_confirmation: '',
+    name: getNameFromEmail(params.get('email')),
+    email: params.get('email'),
+    password: params.get('invite_code'),
+    password_confirmation: params.get('invite_code'),
     terms: false,
-    invite_code: '',
+    invite_code: params.get('invite_code'),
 });
+
+console.log(params.get('invite_code'));
 
 const submit = () => {
     form.post(route('register'), {

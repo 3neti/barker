@@ -15,11 +15,25 @@ return [
             ],
         ],
         'teams' => [
-            'default' => env('DOMAIN_DEFAULT_TEAM_NAME',  'General Membership'),
-            'standby' => env('DOMAIN_STANDBY_TEAM_NAME',  'Standby'),
+            'general' => [
+                'name' => env('DOMAIN_DEFAULT_TEAM_NAME',  'General Membership'),
+                'personal_team' =>  false,
+            ],
+            'standby' => [
+                'name' => env('DOMAIN_STANDBY_TEAM_NAME',  'Standby'),
+                'personal_team' =>  true,
+            ],
         ],
         'wallet' => [
             'default' => env('DOMAIN_DEFAULT_WALLET_BALANCE', 10000000),
+        ],
+    ],
+    'defaults' => [
+        'user' => [
+            'role' => env('DOMAIN_DEFAULT_USER_ROLE',  'agent'),
+            'team' => [
+                'name' =>  env('DOMAIN_DEFAULT_TEAM_NAME',  'Standby'),
+            ],
         ],
     ],
 ];

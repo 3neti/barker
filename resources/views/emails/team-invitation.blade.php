@@ -4,7 +4,9 @@
 @if (Laravel\Fortify\Features::enabled(Laravel\Fortify\Features::registration()))
 {{ __('If you do not have an account, you may create one by clicking the button below. After creating an account, you may click the invitation acceptance button in this email to accept the team invitation:') }}
 
-@component('mail::button', ['url' => route('register')])
+{{ __('Use the following code to register: **:invite_code**', ['invite_code' => $inviteCode]) }}
+
+@component('mail::button', ['url' => route('register', ['invite_code' => $inviteCode, 'email' => $invitation->email])])
 {{ __('Create Account') }}
 @endcomponent
 

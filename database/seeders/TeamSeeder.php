@@ -12,21 +12,21 @@ use App\Models\User;
 class TeamSeeder extends Seeder
 {
     const CONFIRMED = 1;
-    const DEFAULT_TEAM_NDX = 'default';
+    const GENERAL_TEAM_NDX = 'general';
 
     public function run()
     {
         return DB::transaction(function () {
             return tap(app(User::class)->create($this->adminAttributes()), function (User $admin) {
                 $teams = [];
-                foreach ($this->seededTeams() as $ndx => $name) {
-                    $team = app(CreateTeam::class)->create($admin, compact('name'));
+                foreach ($this->seededTeams() as $ndx => $attribs) {
+                    $team = app(CreateTeam::class)->create($admin, $attribs);
                     $admin->ownedTeams()->save($team);
                     $teams[$ndx] = $team;
                 }
-                tap($teams[self::DEFAULT_TEAM_NDX], function ($defaultTeam) use ($admin) {
-                    $defaultTeam->users()->attach($admin, $this->adminRoleAttribute());
-                    $admin->switchTeam($defaultTeam);
+                tap($teams[self::GENERAL_TEAM_NDX], function ($generalTeam) use ($admin) {;
+                    $generalTeam->users()->attach($admin, User::adminRoleAttribute());
+                    $admin->switchTeam($generalTeam);
                 });
             })->depositFloat(...$this->depositArgs());
         });
@@ -41,11 +41,6 @@ class TeamSeeder extends Seeder
             'email' => $attribs['email'],
             'password' => Hash::make($attribs['password']),
         ];
-    }
-
-    #[ArrayShape(['role' => "mixed"])] protected function adminRoleAttribute(): array
-    {
-        return ['role' => config('domain.seeds.user.system.role')];
     }
 
     protected function seededTeams(): array
@@ -67,7 +62,7 @@ class TeamSeeder extends Seeder
         return config('domain.seeds.wallet.default');
     }
 
-    #[ArrayShape(['message' => "string", 'from' => "string"])] protected function defaultTransactionMeta(): array
+    protected function defaultTransactionMeta(): array
     {
         return ['message' => 'initial deposit', 'from' => 'system'];
     }

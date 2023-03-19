@@ -14,6 +14,9 @@ class CreateNewUser implements CreatesNewUsers
 
     /**
      * Create a newly registered user.
+     * Invite Code is required, no walk-ins...
+     * ...unless probably one pays in advance -
+     * this logic is not here
      *
      * @param  array<string, string>  $input
      */
@@ -33,7 +36,9 @@ class CreateNewUser implements CreatesNewUsers
                 'email' => $input['email'],
                 'password' => Hash::make($input['password']),
             ]), function (User $user) {
-                $this->attachToDefaultTeam($user);
+                if (!$user->isSystem()) {
+                    $this->attachToDefaultTeam($user);
+                }
             });
         });
     }
@@ -53,7 +58,7 @@ class CreateNewUser implements CreatesNewUsers
     protected function attachToDefaultTeam(User $user): void
     {
         if (($system = app(User::class)->system()) && ($default = app(Team::class)->default())) {
-            app(AddTeamMember::class)->add($system, $default, $user->email, 'agent');
+            app(AddTeamMember::class)->add($system, $default, $user->email, User::defaultRole());
             $user->switchTeam($default);
         }
     }

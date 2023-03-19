@@ -12,6 +12,7 @@ use Laravel\Fortify\Http\Controllers\ProfileInformationController;
 use Laravel\Fortify\Http\Controllers\TwoFactorSecretKeyController;
 use Laravel\Fortify\Http\Controllers\PasswordResetLinkController;
 use Laravel\Fortify\Http\Controllers\TwoFactorQrCodeController;
+use Laravel\Fortify\Http\Controllers\RegisteredUserController;
 use Laravel\Fortify\Http\Controllers\RecoveryCodeController;
 use Laravel\Fortify\Http\Controllers\VerifyEmailController;
 use Laravel\Fortify\Http\Controllers\NewPasswordController;
@@ -72,7 +73,7 @@ Route::group(['middleware' => config('fortify.middleware', ['web'])], function (
                 ->name('register');
         }
 
-        Route::post('/register', RegisterUser::class)
+        Route::post('/register', [RegisterUser::class, 'asController'])
             ->middleware(['guest:'.config('fortify.guard')]);
     }
 

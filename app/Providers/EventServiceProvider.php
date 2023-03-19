@@ -2,19 +2,22 @@
 
 namespace App\Providers;
 
+use App\Actions\Webhook\RemoveUserFromStandby;
+use App\Events\NewTeamFromTopup;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Bavix\Wallet\Internal\Events\BalanceUpdatedEventInterface;
 use Junges\InviteCodes\Events\InviteRedeemedEvent;
+use App\Observers\{TeamObserver, UserObserver};
 use App\Listeners\{TempListener, JoinTeam};
 use Illuminate\Auth\Events\Registered;
-use App\Observers\UserObserver;
-use App\Models\User;
+use App\Models\{Team, User};
 
 class EventServiceProvider extends ServiceProvider
 {
     protected $observers = [
         User::class => [UserObserver::class],
+        Team::class => [TeamObserver::class],
     ];
 
     /**
@@ -27,10 +30,13 @@ class EventServiceProvider extends ServiceProvider
             SendEmailVerificationNotification::class,
         ],
         InviteRedeemedEvent::class => [
-            JoinTeam::class
+//            JoinTeam::class
         ],
         BalanceUpdatedEventInterface::class => [
             TempListener::class
+        ],
+        NewTeamFromTopup::class => [
+            RemoveUserFromStandby::class
         ],
     ];
 

@@ -2,6 +2,8 @@
 
 namespace App\Actions\Jetstream;
 
+use App\Classes\InviteCodes;
+use App\Models\Invite;
 use App\Models\Team;
 use App\Models\User;
 use Closure;
@@ -13,11 +15,14 @@ use Illuminate\Validation\Rule;
 use Laravel\Jetstream\Contracts\InvitesTeamMembers;
 use Laravel\Jetstream\Events\InvitingTeamMember;
 use Laravel\Jetstream\Jetstream;
-use Laravel\Jetstream\Mail\TeamInvitation;
+//use Laravel\Jetstream\Mail\TeamInvitation;
+use App\Mail\TeamInvitation;
 use Laravel\Jetstream\Rules\Role;
 
 class InviteTeamMember implements InvitesTeamMembers
 {
+    protected Invite $invite;
+
     /**
      * Invite a new team member to the given team.
      */
@@ -25,16 +30,28 @@ class InviteTeamMember implements InvitesTeamMembers
     {
         Gate::forUser($user)->authorize('addTeamMember', $team);
 
+
         $this->validate($team, $email, $role);
 
         InvitingTeamMember::dispatch($team, $email, $role);
+
+        $invite = $this->invite ?? app(InviteCodes::class)->create()
+            ->restrictUsageTo($email)
+            ->save();
 
         $invitation = $team->teamInvitations()->create([
             'email' => $email,
             'role' => $role,
         ]);
 
-        Mail::to($email)->send(new TeamInvitation($invitation));
+        Mail::to($email)->send(new TeamInvitation($invitation, $invite->code));
+    }
+
+    public function usingThisInvite(Invite $invite): self
+    {
+        $this->invite = $invite;
+
+        return $this;
     }
 
     /**

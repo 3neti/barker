@@ -45,6 +45,8 @@ class Team extends JetstreamTeam
 
     public function default(): ?self
     {
-        return static::where('name', 'General Membership')->first();
+        $record = config('domain.defaults.user.team');
+
+        return app(static::class)->where($record)->first();
     }
 }

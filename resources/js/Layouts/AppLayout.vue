@@ -83,9 +83,9 @@ const logout = () => {
                                                     Team Settings
                                                 </DropdownLink>
 
-<!--                                                <DropdownLink v-if="$page.props.jetstream.canCreateTeams" :href="route('teams.create')">-->
-<!--                                                    Create New Team-->
-<!--                                                </DropdownLink>-->
+                                                <DropdownLink v-if="$page.props.jetstream.canCreateTeams" :href="route('teams.create')">
+                                                    Create New Team
+                                                </DropdownLink>
 
                                                 <div class="border-t border-gray-200 dark:border-gray-600" />
 

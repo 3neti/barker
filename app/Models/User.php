@@ -7,6 +7,8 @@ use Bavix\Wallet\Interfaces\{Confirmable, Wallet, WalletFloat};
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Support\Arr;
+use JetBrains\PhpStorm\ArrayShape;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Jetstream\HasProfilePhoto;
@@ -66,5 +68,20 @@ class User extends Authenticatable implements Confirmable, Wallet, WalletFloat
     public function system(): self
     {
         return Jetstream::findUserByEmailOrFail(config('domain.seeds.user.system.email'));
+    }
+
+    public function isSystem(): bool
+    {
+        return ($this->email === config('domain.seeds.user.system.email'));
+    }
+
+    #[ArrayShape(['role' => "string"])] static public function adminRoleAttribute(): array
+    {
+        return Arr::only(config('domain.seeds.user.system'), 'role');
+    }
+
+    static public function defaultRole(): string
+    {
+        return config('domain.defaults.user.role');
     }
 }
