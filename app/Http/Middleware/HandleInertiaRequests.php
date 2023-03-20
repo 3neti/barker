@@ -49,9 +49,12 @@ class HandleInertiaRequests extends Middleware
                     $user->currentTeam;
                 }
 
+                $user->currentCampaign;
+
                 return array_merge($user->toArray(), array_filter(
                     [
                         'teams' => $userHasTeamFeatures ? $user->teams->values() : null,
+                        'campaigns' => $user->ownedCampaigns->values()
                     ],
                    ),
                     [

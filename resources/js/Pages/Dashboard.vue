@@ -2,7 +2,7 @@
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { router, usePage } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import Welcome from '@/Components/Welcome.vue';
+import Checkin from '@/Components/Checkin.vue';
 import dayjs from 'dayjs';
 
 const formatter = new Intl.NumberFormat('en-PH', {
@@ -32,7 +32,7 @@ dayjs.extend(relativeTime);
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
-                    <Welcome />
+                    <Checkin />
                 </div>
             </div>
         </div>

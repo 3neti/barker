@@ -2,19 +2,21 @@
 
 namespace App\Models;
 
+use App\Traits\HasCampaigns;
 use Bavix\Wallet\Traits\{CanConfirm, HasWallet, HasWalletFloat, HasWallets};
 use Bavix\Wallet\Interfaces\{Confirmable, Wallet, WalletFloat};
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Support\Arr;
-use JetBrains\PhpStorm\ArrayShape;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Jetstream\HasProfilePhoto;
+use JetBrains\PhpStorm\ArrayShape;
 use Laravel\Sanctum\HasApiTokens;
 use Laravel\Jetstream\Jetstream;
 use Laravel\Jetstream\HasTeams;
+use Illuminate\Support\Arr;
 
 class User extends Authenticatable implements Confirmable, Wallet, WalletFloat
 {
@@ -25,6 +27,7 @@ class User extends Authenticatable implements Confirmable, Wallet, WalletFloat
     use Notifiable;
     use HasFactory;
     use HasTeams;
+    use HasCampaigns;
 
     /**
      * The attributes that are mass assignable.
@@ -64,6 +67,11 @@ class User extends Authenticatable implements Confirmable, Wallet, WalletFloat
     protected $appends = [
         'profile_photo_url',
     ];
+
+//    public function campaigns(): HasMany
+//    {
+//        return $this->hasMany(Campaign::class);
+//    }
 
     public function system(): self
     {

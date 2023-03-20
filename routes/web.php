@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\CurrentCampaignController;
+use App\Http\Controllers\CampaignController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -32,6 +34,9 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+    Route::resource('campaigns', CampaignController::class)
+        ->only(['create', 'store']);
+    Route::put('/current-campaign', [CurrentCampaignController::class, 'update'])->name('current-campaign.update');
 });
 
 Route::webhooks('webhook-paynamics-paybiz', 'paynamics-paybiz');

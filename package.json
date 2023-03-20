@@ -20,6 +20,7 @@
         "vue": "^3.2.31"
     },
     "dependencies": {
-        "dayjs": "^1.11.7"
+        "dayjs": "^1.11.7",
+        "vue-final-modal": "^4.0.11"
     }
 }
