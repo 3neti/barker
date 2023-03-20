@@ -3,7 +3,7 @@
 namespace App\Http;
 
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
-use Junges\InviteCodes\Http\Middlewares\ProtectedByInviteCodeMiddleware;
+use App\Http\Middleware\InviteCode;
 
 class Kernel extends HttpKernel
 {
@@ -69,6 +69,6 @@ class Kernel extends HttpKernel
     ];
 
     protected $routeMiddleware = [
-        'protected_by_invite_codes' => ProtectedByInviteCodeMiddleware::class,
+        'invite_code' => InviteCode::class
     ];
 }
