@@ -65,11 +65,19 @@ class WebhookHandler extends ProcessWebhookJob
                 },
                 /** capture team name from sender name */
                 function ($attribs, $next) {
-                    $text = $attribs['name'];
-                    if (preg_match("/(?<name>.*\b).*\((?<team>.*)\)/", $text, $matches)) {
-                        $attribs['name'] = $matches['name'];
-                        $attribs['team'] = $matches['team'];
+
+                    $name = $attribs['name'];
+                    $team  = extractTeamFromName($name);
+                    if (null != $team) {
+                        $attribs['name'] = $name;
+                        $attribs['team'] = $team;
                     }
+//                    $attribs['name'] = $name;
+//                    $text = $attribs['name'];
+//                    if (preg_match("/(?<name>.*\b).*\((?<team>.*)\)/", $text, $matches)) {
+//                        $attribs['name'] = $matches['name'];
+//                        $attribs['team'] = $matches['team'];
+//                    }
 
                     return $next($attribs);
                 },

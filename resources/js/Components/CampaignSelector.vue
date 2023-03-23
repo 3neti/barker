@@ -5,7 +5,7 @@
             <template #trigger>
                 <span class="inline-flex rounded-md">
                     <button type="button" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none focus:bg-gray-50 dark:focus:bg-gray-700 active:bg-gray-50 dark:active:bg-gray-700 transition ease-in-out duration-150">
-                        {{ $page.props.auth.user.current_campaign.name }}
+                        {{ $page.props.auth.user.current_campaign?.name }}
 
                         <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
@@ -40,19 +40,19 @@
         </Dropdown>
     </div>
 
-    <VueFinalModal v-model="showNewSiteModal" classes="flex justify-center items-start pt-16 md:pt-24 mx-4" content-class="relative max-h-full rounded bg-white w-full max-w-2xl p-4 md:p-6" overlay-class="bg-gradient-to-r from-gray-800 to-gray-500 opacity-50" :esc-to-close="true">
-        <h2 class="font-semibold text-lg text-gray-800 leading-tight">New site</h2>
+<!--    <VueFinalModal v-model="showNewSiteModal" classes="flex justify-center items-start pt-16 md:pt-24 mx-4" content-class="relative max-h-full rounded bg-white w-full max-w-2xl p-4 md:p-6" overlay-class="bg-gradient-to-r from-gray-800 to-gray-500 opacity-50" :esc-to-close="true">-->
+<!--        <h2 class="font-semibold text-lg text-gray-800 leading-tight">New site</h2>-->
 
-        <form v-on:submit.prevent="createSite" class="overflow-hidden space-y-4">
-            <InputLabel for="domain" value="Domain" class="sr-only" />
-            <TextInput id="domain" type="text" class="block w-full h-9 text-sm" placeholder="e.g. https://codecourse.com" v-model="siteForm.domain" :class="{ 'border-red-500': siteForm.errors.domain }" />
-            <InputError class="mt-2" :message="siteForm.errors.domain" />
+<!--        <form v-on:submit.prevent="createSite" class="overflow-hidden space-y-4">-->
+<!--            <InputLabel for="domain" value="Domain" class="sr-only" />-->
+<!--            <TextInput id="domain" type="text" class="block w-full h-9 text-sm" placeholder="e.g. https://codecourse.com" v-model="siteForm.domain" :class="{ 'border-red-500': siteForm.errors.domain }" />-->
+<!--            <InputError class="mt-2" :message="siteForm.errors.domain" />-->
 
-            <PrimaryButton>
-                Add
-            </PrimaryButton>
-        </form>
-    </VueFinalModal>
+<!--            <PrimaryButton>-->
+<!--                Add-->
+<!--            </PrimaryButton>-->
+<!--        </form>-->
+<!--    </VueFinalModal>-->
 </template>
 
 <script setup>

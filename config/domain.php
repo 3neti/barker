@@ -22,6 +22,7 @@ return [
             'standby' => [
                 'name' => env('DOMAIN_STANDBY_TEAM_NAME',  'Standby'),
                 'personal_team' =>  true,
+                'switchable' => false,
             ],
         ],
         'wallet' => [
@@ -34,6 +35,9 @@ return [
             'team' => [
                 'name' =>  env('DOMAIN_DEFAULT_TEAM_NAME',  'Standby'),
             ],
+        ],
+        'campaign' => [
+            'role' => env('DOMAIN_DEFAULT_CAMPAIGN_ROLE',  'agent'),
         ],
     ],
 ];

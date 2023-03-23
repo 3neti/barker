@@ -5,8 +5,8 @@ namespace App\Traits;
 use Laravel\Jetstream\{Jetstream, OwnerRole};
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Str;
+use App\Models\Enlistment;
 use App\Models\Campaign;
-use App\Models\Membership;
 
 trait HasCampaigns
 {
@@ -22,6 +22,7 @@ trait HasCampaigns
     }
 
     /**
+     * @TODO DEPRECATE
      * Get the current campaign of the user's context.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -36,6 +37,7 @@ trait HasCampaigns
     }
 
     /**
+     * @TODO DEPRECATE
      * Switch the user's context to the given campaign.
      *
      * @param  mixed  $campaign
@@ -83,11 +85,20 @@ trait HasCampaigns
      */
     public function campaigns()
     {
-        return $this->belongsToMany(Campaign::class, Membership::class)
+        return $this->belongsToMany(Campaign::class, Enlistment::class)
             ->withPivot('role')
             ->withTimestamps()
-            ->as('membership');
+            ->as('enlistment')
+            ;
     }
+//    public function campaigns()
+//    {
+//        return $this->belongsToMany(Campaign::class, Enlistment::class)
+//            ->withPivot('role')
+//            ->withTimestamps()
+//            ->as('enlistment')
+//            ;
+//    }
 
     /**
      * Get the user's "personal" campaign.
@@ -147,10 +158,10 @@ trait HasCampaigns
             return;
         }
 
-        $role = $campaign->users
+        $role = $campaign->teams
             ->where('id', $this->id)
             ->first()
-            ->membership
+            ->enlistment
             ->role;
 
         return $role ? Jetstream::findRole($role) : null;
@@ -169,58 +180,58 @@ trait HasCampaigns
             return true;
         }
 
-        return $this->belongsToCampaign($campaign) && optional(Jetstream::findRole($campaign->users->where(
+        return $this->belongsToCampaign($campaign) && optional(Jetstream::findRole($campaign->teams->where(
                 'id', $this->id
-            )->first()->membership->role))->key === $role;
+            )->first()->enlistment->role))->key === $role;
     }
 
-    /**
-     * Get the user's permissions for the given campaign.
-     *
-     * @param  mixed  $campaign
-     * @return array
-     */
-    public function campaignPermissions($campaign)
-    {
-        if ($this->ownsCampaign($campaign)) {
-            return ['*'];
-        }
-
-        if (! $this->belongsToCampaign($campaign)) {
-            return [];
-        }
-
-        return (array) optional($this->campaignRole($campaign))->permissions;
-    }
-
-    /**
-     * Determine if the user has the given permission on the given campaign.
-     *
-     * @param  mixed  $campaign
-     * @param  string  $permission
-     * @return bool
-     */
-    public function hasCampaignPermission($campaign, string $permission)
-    {
-        if ($this->ownsCampaign($campaign)) {
-            return true;
-        }
-
-        if (! $this->belongsToCampaign($campaign)) {
-            return false;
-        }
-
-        if (in_array(HasApiTokens::class, class_uses_recursive($this)) &&
-            ! $this->tokenCan($permission) &&
-            $this->currentAccessToken() !== null) {
-            return false;
-        }
-
-        $permissions = $this->campaignPermissions($campaign);
-
-        return in_array($permission, $permissions) ||
-            in_array('*', $permissions) ||
-            (Str::endsWith($permission, ':create') && in_array('*:create', $permissions)) ||
-            (Str::endsWith($permission, ':update') && in_array('*:update', $permissions));
-    }
+//    /**
+//     * Get the user's permissions for the given campaign.
+//     *
+//     * @param  mixed  $campaign
+//     * @return array
+//     */
+//    public function campaignPermissions($campaign)
+//    {
+//        if ($this->ownsCampaign($campaign)) {
+//            return ['*'];
+//        }
+//
+//        if (! $this->belongsToCampaign($campaign)) {
+//            return [];
+//        }
+//
+//        return (array) optional($this->campaignRole($campaign))->permissions;
+//    }
+//
+//    /**
+//     * Determine if the user has the given permission on the given campaign.
+//     *
+//     * @param  mixed  $campaign
+//     * @param  string  $permission
+//     * @return bool
+//     */
+//    public function hasCampaignPermission($campaign, string $permission)
+//    {
+//        if ($this->ownsCampaign($campaign)) {
+//            return true;
+//        }
+//
+//        if (! $this->belongsToCampaign($campaign)) {
+//            return false;
+//        }
+//
+//        if (in_array(HasApiTokens::class, class_uses_recursive($this)) &&
+//            ! $this->tokenCan($permission) &&
+//            $this->currentAccessToken() !== null) {
+//            return false;
+//        }
+//
+//        $permissions = $this->campaignPermissions($campaign);
+//
+//        return in_array($permission, $permissions) ||
+//            in_array('*', $permissions) ||
+//            (Str::endsWith($permission, ':create') && in_array('*:create', $permissions)) ||
+//            (Str::endsWith($permission, ':update') && in_array('*:update', $permissions));
+//    }
 }

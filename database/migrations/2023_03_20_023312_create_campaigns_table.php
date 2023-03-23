@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name')->unique();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('team_id')->nullable();
             $table->boolean('personal_campaign')->default(false);
             $table->timestamps();
         });

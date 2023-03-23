@@ -27,7 +27,7 @@ class User extends Authenticatable implements Confirmable, Wallet, WalletFloat
     use Notifiable;
     use HasFactory;
     use HasTeams;
-    use HasCampaigns;
+//    use HasCampaigns;
 
     /**
      * The attributes that are mass assignable.
@@ -56,7 +56,7 @@ class User extends Authenticatable implements Confirmable, Wallet, WalletFloat
      * @var array<string, string>
      */
     protected $casts = [
-        'email_verified_at' => 'datetime',
+        'email_verified_at' => 'datetime'
     ];
 
     /**
@@ -91,5 +91,41 @@ class User extends Authenticatable implements Confirmable, Wallet, WalletFloat
     static public function defaultRole(): string
     {
         return config('domain.defaults.user.role');
+    }
+
+    public function campaigns()
+    {
+        return $this->currentTeam->campaigns();
+    }
+
+    /**
+     * Get the current campaign of the user's context.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function currentCampaign()
+    {
+        if (is_null($this->current_campaign_id) && $this->currentTeam?->current_campaign_id ) {
+            $this->switchCampaign($this->currentTeam->currentCampaign);
+        }
+
+        return $this->belongsTo(Campaign::class, 'current_campaign_id');
+    }
+
+    /**
+     * Switch the user's context to the given campaign.
+     *
+     * @param  mixed  $campaign
+     * @return bool
+     */
+    public function switchCampaign($campaign)
+    {
+        $this->forceFill([
+            'current_campaign_id' => $campaign->id,
+        ])->save();
+
+        $this->setRelation('currentCampaign', $campaign);
+
+        return true;
     }
 }

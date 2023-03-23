@@ -187,6 +187,10 @@ return [
     'wallet' => [
         'table' => 'wallets',
         'model' => Wallet::class,
+        'casts' => [
+            'balance' => 'integer',
+            'balanceFloat' => 'float'
+        ],
         'creating' => [],
         'default' => [
             'name' => 'Default Wallet',

@@ -5,8 +5,8 @@ namespace App\Actions\Webhook;
 use Illuminate\Support\Facades\Validator;
 use Lorisleiva\Actions\Concerns\AsAction;
 use App\Actions\Jetstream\CreateTeam;
+use App\Events\TeamMemberAssigned;
 use Laravel\Jetstream\Jetstream;
-use App\Events\NewTeamFromTopup;
 use Illuminate\Support\Arr;
 use App\Models\User;
 
@@ -27,7 +27,7 @@ class AssignUserTeam
             $team = app(CreateTeam::class)->create($user, compact('name'));
             $team->users()->attach($user, User::adminRoleAttribute());
             $user->switchTeam($team);
-            event(new NewTeamFromTopup($user, $team));
+            TeamMemberAssigned::dispatch($team, $user);
         });
     }
 

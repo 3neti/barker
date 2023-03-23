@@ -22,9 +22,9 @@ class AddCampaignMember
      */
     public function handle(User $user, Campaign $campaign, string $email, string $role = null): void
     {
-        Gate::forUser($user)->authorize('addCampaignMember', $campaign);
+//        Gate::forUser($user)->authorize('addCampaignMember', $campaign);
 
-        $this->validate($campaign, $email, $role);
+//        $this->validate($campaign, $email, $role);
 
         $newCampaignMember = Jetstream::findUserByEmailOrFail($email);
 

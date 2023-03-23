@@ -45,16 +45,17 @@ class HandleInertiaRequests extends Middleware
 
                 $userHasTeamFeatures = Jetstream::userHasTeamFeatures($user);
 
+                /** magic eager loading */
                 if ($user && $userHasTeamFeatures) {
                     $user->currentTeam;
+                    $user->currentCampaign;
                 }
-
-                $user->currentCampaign;
 
                 return array_merge($user->toArray(), array_filter(
                     [
                         'teams' => $userHasTeamFeatures ? $user->teams->values() : null,
-                        'campaigns' => $user->ownedCampaigns->values()
+                        'all_teams' => $userHasTeamFeatures ? $user->allTeams()->values() : null,
+                        'campaigns' => $user->campaigns?->values() ?? null,//added the null, not yet tested, you can omit the ?? null
                     ],
                    ),
                     [

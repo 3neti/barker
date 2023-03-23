@@ -94,8 +94,8 @@ const logout = () => {
                                                     Switch Teams
                                                 </div>
 
-<!--                                                <template v-for="team in $page.props.auth.user.all_teams" :key="team.id">-->
-                                                <template v-for="team in $page.props.auth.user.teams" :key="team.id">
+<!--                                                <template v-for="team in $page.props.auth.user.teams" :key="team.id">-->
+                                                <template v-for="team in $page.props.auth.user.all_teams" :key="team.id">
                                                     <form @submit.prevent="switchToTeam(team)">
                                                         <DropdownLink as="button">
                                                             <div class="flex items-center">

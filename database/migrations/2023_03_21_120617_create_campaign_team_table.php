@@ -11,14 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('campaign_user', function (Blueprint $table) {
+        Schema::create('campaign_team', function (Blueprint $table) {
             $table->id();
             $table->foreignId('campaign_id');
-            $table->foreignId('user_id');
+            $table->foreignId('team_id');
             $table->string('role')->nullable();
             $table->timestamps();
-
-            $table->unique(['campaign_id', 'user_id']);
+            $table->unique(['campaign_id', 'team_id']);
         });
     }
 
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('campaign_user');
+        Schema::dropIfExists('campaign_team');
     }
 };

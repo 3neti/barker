@@ -2,16 +2,22 @@
 
 namespace App\Models;
 
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Laravel\Jetstream\Team as JetstreamTeam;
 use Laravel\Jetstream\Events\TeamCreated;
 use Laravel\Jetstream\Events\TeamDeleted;
 use Laravel\Jetstream\Events\TeamUpdated;
+use App\Models\Scopes\Switchable;
 use Laravel\Jetstream\Jetstream;
-use Laravel\Jetstream\Team as JetstreamTeam;
+use Illuminate\Database\Eloquent\Builder;
+use App\Traits\HasCampaigns;
 
 class Team extends JetstreamTeam
 {
     use HasFactory;
+    use HasCampaigns;
 
     /**
      * The attributes that should be cast.
@@ -20,6 +26,7 @@ class Team extends JetstreamTeam
      */
     protected $casts = [
         'personal_team' => 'boolean',
+        'switchable' => 'boolean',
     ];
 
     /**
@@ -30,6 +37,8 @@ class Team extends JetstreamTeam
     protected $fillable = [
         'name',
         'personal_team',
+        'switchable',
+        'current_campaign_id'
     ];
 
     /**
@@ -43,10 +52,27 @@ class Team extends JetstreamTeam
         'deleted' => TeamDeleted::class,
     ];
 
+//    protected static function boot()
+//    {
+//        parent::boot();
+//
+//        static::addGlobalScope(new Switchable);
+//    }
+
     public function default(): ?self
     {
         $record = config('domain.defaults.user.team');
 
-        return app(static::class)->where($record)->first();
+        return app(static::class)->withoutGlobalScope(Switchable::class)->where($record)->first();
+    }
+
+//    public function teams(): HasMany
+//    {
+//        return $this->hasMany(Team::class);
+//    }
+
+    public function scopeSwitchable(Builder $builder)
+    {
+        $builder->where('switchable', '=', 1);
     }
 }
