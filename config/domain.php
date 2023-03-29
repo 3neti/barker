@@ -36,8 +36,8 @@ return [
                 'name' =>  env('DOMAIN_DEFAULT_TEAM_NAME',  'Standby'),
             ],
         ],
-        'campaign' => [
-            'role' => env('DOMAIN_DEFAULT_CAMPAIGN_ROLE',  'agent'),
-        ],
+//        'campaign' => [
+//            'role' => env('DOMAIN_DEFAULT_CAMPAIGN_ROLE',  'agent'),
+//        ],
     ],
 ];

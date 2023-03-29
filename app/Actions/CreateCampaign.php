@@ -7,6 +7,8 @@ use App\Events\{AddingCampaign, CampaignAdded};
 use Lorisleiva\Actions\Concerns\AsAction;
 use App\Models\{Campaign, User};
 use Illuminate\Support\Arr;
+use App\Classes\Barker;
+use App\Rules\Type;
 
 class CreateCampaign
 {
@@ -21,9 +23,7 @@ class CreateCampaign
     public function handle(User $owner, array $input): Campaign
     {
 //        Gate::forUser($user)->authorize('create', Jetstream::newCampaignModel());
-        Validator::make($input, [
-            'name' => ['required', 'string', 'max:255', 'unique:campaigns,name'],
-        ])->validateWithBag('createCampaign');
+        Validator::make($input, $this->rules())->validateWithBag('createCampaign');
 
         AddingCampaign::dispatch($owner);
 
@@ -33,9 +33,10 @@ class CreateCampaign
         $campaign->team()->associate($team)->save();
         $team->switchCampaign($campaign);
         $owner->switchCampaign($campaign);
-        $role = Arr::get($input, 'role', config('domain.defaults.campaign.role', 'agent'));
+        $type = Arr::get($input, 'type');
 
-        CampaignAdded::dispatch($owner, $campaign, $role);
+        $channels = Arr::only($input, Barker::$channels);
+        CampaignAdded::dispatch($owner, $campaign, $type, $channels);
 
         return $campaign;
     }
@@ -43,5 +44,15 @@ class CreateCampaign
     public function asJob(User $owner, array $input)
     {
         $this->handle($owner, $input);
+    }
+
+    protected function rules(): array
+    {
+        return array_filter([
+            'email' => ['nullable', 'email'],
+            'type' => Barker::hasTypes()
+                ? ['required', 'string', new Type]
+                : null,
+        ]);
     }
 }

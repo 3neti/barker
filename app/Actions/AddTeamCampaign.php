@@ -10,22 +10,24 @@ class AddTeamCampaign
 {
     use AsAction;
 
-    public function handle(Team $team, Campaign $campaign, string $role)
+    /** TODO: add validation */
+    public function handle(Team $team, Campaign $campaign, string $type)
     {
         AddingTeamCampaign::dispatch($team, $campaign);
         $campaign->teams()->attach(
-            $team, ['role' => $role]
+            $team, ['type' => $type]
         );
+        $team->switchCampaign($campaign);
         TeamCampaignAdded::dispatch($team, $campaign);
     }
 
-    public function asJob(Team $team, Campaign $campaign, string $role)
+    public function asJob(Team $team, Campaign $campaign, string $type)
     {
-        $this->handle($team, $campaign, $role);
+        $this->handle($team, $campaign, $type);
     }
 
     public function asListener(CampaignAdded $event)
     {
-        $this->handle($event->owner->currentTeam, $event->campaign, $event->role);
+        $this->handle($event->owner->currentTeam, $event->campaign, $event->type);
     }
 }

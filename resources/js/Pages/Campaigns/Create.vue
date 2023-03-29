@@ -1,6 +1,12 @@
 <script setup>
 import AppLayout from '@/Layouts/AppLayout.vue';
 import CreateCampaignForm from '@/Pages/Campaigns/Partials/CreateCampaignForm.vue';
+
+const props = defineProps({
+    test: String,
+    availableTypes: Array,
+});
+
 </script>
 
 <template>

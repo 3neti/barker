@@ -8,7 +8,7 @@ class Enlistment extends Pivot
 {
     protected $table = 'campaign_team';
 
-    protected $fillable = ['role'];
+    protected $fillable = ['type'];
 
     public function team()
     {

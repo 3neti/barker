@@ -136,6 +136,7 @@ test('team campaign coverage', function ($attribs, $teamNames) {
     expect($team2->belongsToCampaign($campaigns[0]))->toBeFalse();
     expect($team2->belongsToCampaign($campaigns[1]))->toBeFalse();
 
+
     /** although there are 2 campaigns persisted */
     expect(app(Campaign::class)->all())->toHaveCount(2);
 
@@ -147,7 +148,7 @@ test('team campaign coverage', function ($attribs, $teamNames) {
 
     /** so if user1 has 1 team */
     expect($user1->teams)->toHaveCount(1);
-    expect($user1->currentTeam->id)->toBe($team1->id);
+    expect($user1->currentTeam->is($team1))->toBeTrue();
 
     /** user1 has no enlistments and no current campaign context */
     expect($user1->campaigns)->toHaveCount(0);
@@ -155,7 +156,7 @@ test('team campaign coverage', function ($attribs, $teamNames) {
 
     /** now if the team1 campaigns are enlisted */
     foreach ($campaigns as $currentCampaign) {
-        app(AddTeamCampaign::class)->run($team1, $currentCampaign, 'agent');
+        app(AddTeamCampaign::class)->run($team1, $currentCampaign, 'accounting');
     }
 
     /** note: the event CampaignAdded was disabled */
@@ -170,13 +171,18 @@ test('team campaign coverage', function ($attribs, $teamNames) {
 
     /** therefore user1 should have 2 campaigns */
     expect($user1->campaigns)->toHaveCount(2);
-    expect($user1->currentCampaign->id)->toBe($user1->currentTeam->currentCampaign->id);
+    expect($user1->currentCampaign->is($user1->currentTeam->currentCampaign))->toBeTrue();
 
     /** team2 does not have any campaigns */
     expect($team2->campaigns)->toHaveCount(0);
 
     /** so user2 of team also does not have any campaigns */
     expect($user2->campaigns)->toHaveCount(0);
+
+    foreach ($campaigns as $campaign) {
+        expect($user1->currentTeam->hasCampaignType($campaign, 'authentication'))->toBeFalse();
+        expect($user1->currentTeam->campaignType($campaign)->key)->toBe('accounting');
+    }
 
     /** lets introduce a new agent i.e. user3 under team1 */
     $invite3 = app(InviteCodes::class)->create()->restrictUsageTo('adphurtado@me.com')->save();
@@ -197,7 +203,7 @@ test('team campaign coverage', function ($attribs, $teamNames) {
     /** even after user3 is added to the team */
     $defaultTeam = app(Team::class)->default();
     expect($defaultTeam->campaigns)->toHaveCount(0);
-    expect($user3->currentTeam->id)->toBe($defaultTeam->id);
+    expect($user3->currentTeam->is($defaultTeam))->toBeTrue();
     expect($user3->campaigns)->toHaveCount(0);
 
     /** but once user3 switches to team1, user3 now has 2 campaigns */
@@ -206,4 +212,3 @@ test('team campaign coverage', function ($attribs, $teamNames) {
 })
     ->with('attribs')
     ->with('campaigns');
-

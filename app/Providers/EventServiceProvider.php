@@ -3,16 +3,17 @@
 namespace App\Providers;
 
 use App\Actions\AddTeamCampaign;
+use App\Actions\CreateCampaignItems;
 use App\Events\CampaignAdded;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use App\Observers\{CampaignObserver, TeamObserver, UserObserver};
+use App\Observers\{CampaignObserver, CheckinObserver, TeamObserver, UserObserver};
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Bavix\Wallet\Internal\Events\BalanceUpdatedEventInterface;
 use Junges\InviteCodes\Events\InviteRedeemedEvent;
 use App\Actions\Webhook\RemoveUserFromStandby;
 use App\Listeners\{TempListener, JoinTeam};
 use Illuminate\Auth\Events\Registered;
-use App\Models\{Campaign, Team, User};
+use App\Models\{Campaign, Checkin, Team, User};
 use App\Events\TeamMemberAssigned;
 
 class EventServiceProvider extends ServiceProvider
@@ -21,6 +22,7 @@ class EventServiceProvider extends ServiceProvider
         User::class => [UserObserver::class],
         Team::class => [TeamObserver::class],
         Campaign::class => [CampaignObserver::class],
+        Checkin::class => [CheckinObserver::class],
     ];
 
     /**
@@ -42,7 +44,8 @@ class EventServiceProvider extends ServiceProvider
             RemoveUserFromStandby::class
         ],
         CampaignAdded::class => [
-            AddTeamCampaign::class
+            AddTeamCampaign::class,
+            CreateCampaignItems::class
         ],
     ];
 

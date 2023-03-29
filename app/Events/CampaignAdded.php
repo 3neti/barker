@@ -9,5 +9,5 @@ class CampaignAdded
 {
     use Dispatchable;
 
-    public function __construct(public User $owner, public Campaign $campaign, public ?string $role = null){}
+    public function __construct(public User $owner, public Campaign $campaign, public string $type, public ?array $channels = []){}
 }

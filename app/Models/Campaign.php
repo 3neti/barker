@@ -6,9 +6,11 @@ use Illuminate\Database\Eloquent\Relations\{BelongsTo, BelongsToMany};
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use App\Traits\HasCampaignItems;
 
 class Campaign extends Model
 {
+    use HasCampaignItems;
     use HasFactory;
 
     protected $fillable = ['name', 'personal_team'];
@@ -160,7 +162,7 @@ class Campaign extends Model
     public function teams(): BelongsToMany
     {
         return $this->belongsToMany(Team::class, Enlistment::class)
-            ->withPivot('role')
+            ->withPivot('type')
             ->withTimestamps()
             ->as('enlistment');
     }

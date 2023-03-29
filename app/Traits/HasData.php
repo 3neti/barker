@@ -24,4 +24,16 @@ trait HasData
             ]
         );
     }
+
+//    public function setAttribute(int $value): self
+//    {
+//        $this->features['load'] = $value;
+//
+//        return $this;
+//    }
+//
+//    public function getUsageAttribute(): int
+//    {
+//        return $this->features['usage'] ?? 0;
+//    }
 }

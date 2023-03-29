@@ -2,6 +2,7 @@
 
 namespace App\Traits;
 
+use App\Classes\Type;
 use Laravel\Jetstream\{Jetstream, OwnerRole};
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Str;
@@ -86,19 +87,11 @@ trait HasCampaigns
     public function campaigns()
     {
         return $this->belongsToMany(Campaign::class, Enlistment::class)
-            ->withPivot('role')
+            ->withPivot('type')
             ->withTimestamps()
             ->as('enlistment')
             ;
     }
-//    public function campaigns()
-//    {
-//        return $this->belongsToMany(Campaign::class, Enlistment::class)
-//            ->withPivot('role')
-//            ->withTimestamps()
-//            ->as('enlistment')
-//            ;
-//    }
 
     /**
      * Get the user's "personal" campaign.
@@ -143,95 +136,35 @@ trait HasCampaigns
     }
 
     /**
-     * Get the role that the user has on the campaign.
+     * Get the type that the user has on the campaign.
      *
      * @param  mixed  $campaign
-     * @return \Laravel\Jetstream\Role|null
+     * @return \App\Classes\Type|null
      */
-    public function campaignRole($campaign)
+    public function campaignType($campaign)
     {
-        if ($this->ownsCampaign($campaign)) {
-            return new OwnerRole;
-        }
-
-        if (! $this->belongsToCampaign($campaign)) {
-            return;
-        }
-
-        $role = $campaign->teams
+        $type = $campaign->teams
             ->where('id', $this->id)
             ->first()
             ->enlistment
-            ->role;
+            ->type;
 
-        return $role ? Jetstream::findRole($role) : null;
+        return $type ? new Type($type, 'asdsadsa', []) : null;
     }
 
     /**
-     * Determine if the user has the given role on the given campaign.
+     * Determine if the user has the given type on the given campaign.
      *
      * @param  mixed  $campaign
-     * @param  string  $role
+     * @param  string  type
      * @return bool
      */
-    public function hasCampaignRole($campaign, string $role)
+    public function hasCampaignType($campaign, string $type)
     {
-        if ($this->ownsCampaign($campaign)) {
-            return true;
-        }
-
-        return $this->belongsToCampaign($campaign) && optional(Jetstream::findRole($campaign->teams->where(
-                'id', $this->id
-            )->first()->enlistment->role))->key === $role;
+        return $this->belongsToCampaign($campaign) && $campaign->teams
+                ->where('id', $this->id)
+                ->first()
+                ->enlistment
+                ->type === $type;
     }
-
-//    /**
-//     * Get the user's permissions for the given campaign.
-//     *
-//     * @param  mixed  $campaign
-//     * @return array
-//     */
-//    public function campaignPermissions($campaign)
-//    {
-//        if ($this->ownsCampaign($campaign)) {
-//            return ['*'];
-//        }
-//
-//        if (! $this->belongsToCampaign($campaign)) {
-//            return [];
-//        }
-//
-//        return (array) optional($this->campaignRole($campaign))->permissions;
-//    }
-//
-//    /**
-//     * Determine if the user has the given permission on the given campaign.
-//     *
-//     * @param  mixed  $campaign
-//     * @param  string  $permission
-//     * @return bool
-//     */
-//    public function hasCampaignPermission($campaign, string $permission)
-//    {
-//        if ($this->ownsCampaign($campaign)) {
-//            return true;
-//        }
-//
-//        if (! $this->belongsToCampaign($campaign)) {
-//            return false;
-//        }
-//
-//        if (in_array(HasApiTokens::class, class_uses_recursive($this)) &&
-//            ! $this->tokenCan($permission) &&
-//            $this->currentAccessToken() !== null) {
-//            return false;
-//        }
-//
-//        $permissions = $this->campaignPermissions($campaign);
-//
-//        return in_array($permission, $permissions) ||
-//            in_array('*', $permissions) ||
-//            (Str::endsWith($permission, ':create') && in_array('*:create', $permissions)) ||
-//            (Str::endsWith($permission, ':update') && in_array('*:update', $permissions));
-//    }
 }

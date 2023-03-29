@@ -4,14 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCampaignRequest;
 use App\Http\Requests\UpdateCampaignRequest;
+use Laravel\Jetstream\RedirectsActions;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Jetstream\Jetstream;
 use App\Actions\CreateCampaign;
 use Illuminate\Http\Request;
 use App\Models\Campaign;
+use App\Classes\Barker;
 use Inertia\Response;
-use Laravel\Jetstream\RedirectsActions;
 
 class CampaignController extends Controller
 {
@@ -35,7 +36,9 @@ class CampaignController extends Controller
     {
 //        Gate::authorize('create', Jetstream::newTeamModel());
 
-        return Jetstream::inertia()->render($request, 'Campaigns/Create');
+        return Jetstream::inertia()->render($request, 'Campaigns/Create', [
+            'availableTypes' => array_values(Barker::$types),
+        ]);
     }
 
     /**
@@ -47,7 +50,7 @@ class CampaignController extends Controller
     public function store(StoreCampaignRequest $request): RedirectResponse
     {
         $action = app(CreateCampaign::class);
-        $action->run($request->user(), $request->all());
+        app(CreateCampaign::class)->run($request->user(), $request->all());
 
 //        return redirect(route('dashboard'));
         return $this->redirectPath($action);
