@@ -4,11 +4,9 @@ namespace App\Http\Requests;
 
 use Propaganistas\LaravelPhone\Rules\Phone as PhoneRule;
 use Illuminate\Foundation\Http\FormRequest;
-use App\Classes\Barker;
 use App\Classes\Phone;
-use App\Rules\Type;
 
-class StoreCampaignRequest extends FormRequest
+class StoreCheckinRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,13 +24,8 @@ class StoreCampaignRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255', 'unique:campaigns,name'],
-            'type' => Barker::hasTypes()
-                ? ['required', 'string', new Type]
-                : null,
             'mobile' => ['nullable', (new PhoneRule)->mobile()->country('PH')],
             'email' => ['nullable', 'email'],
-            'url' => ['nullable', 'url'],
         ];
     }
 

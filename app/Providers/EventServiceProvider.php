@@ -4,7 +4,8 @@ namespace App\Providers;
 
 use App\Actions\AddTeamCampaign;
 use App\Actions\CreateCampaignItems;
-use App\Events\CampaignAdded;
+use App\Actions\Hyperverge\UpdateCheckinUrl;
+use App\Events\{CampaignAdded, CheckinAdded};
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use App\Observers\{CampaignObserver, CheckinObserver, TeamObserver, UserObserver};
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -15,6 +16,8 @@ use App\Listeners\{TempListener, JoinTeam};
 use Illuminate\Auth\Events\Registered;
 use App\Models\{Campaign, Checkin, Team, User};
 use App\Events\TeamMemberAssigned;
+use App\Actions\Hyperverge\GenerateURL;
+use App\Events\URLGenerated;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -47,6 +50,12 @@ class EventServiceProvider extends ServiceProvider
             AddTeamCampaign::class,
             CreateCampaignItems::class
         ],
+        CheckinAdded::class => [
+            GenerateURL::class
+        ],
+        URLGenerated::class => [
+            UpdateCheckinUrl::class
+        ]
     ];
 
     /**

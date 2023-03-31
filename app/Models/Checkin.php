@@ -23,11 +23,16 @@ class Checkin extends Model
         'location' => Point::class,
     ];
 
-    protected $appends = ['QRCodeURI', 'IdType', 'IdNumber', 'IdFullName', 'IdImageUrl', 'IdBirthdate'];
+//    protected $appends = ['QRCodeURI', 'IdType', 'IdNumber', 'IdFullName', 'IdImageUrl', 'IdBirthdate'];
 
     public function agent(): BelongsTo
     {
         return $this->belongsTo(User::class, 'agent_id');
+    }
+
+    public function campaign(): BelongsTo
+    {
+        return $this->belongsTo(Campaign::class);
     }
 
     public function person(): MorphTo
@@ -38,6 +43,13 @@ class Checkin extends Model
     public function setAgent(User $agent): self
     {
         $this->agent()->associate($agent);
+
+        return $this;
+    }
+
+    public function setCampaign(Campaign $campaign): self
+    {
+        $this->campaign()->associate($campaign);
 
         return $this;
     }

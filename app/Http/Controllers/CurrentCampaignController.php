@@ -22,6 +22,7 @@ class CurrentCampaignController extends Controller
             abort(403);
         }
 
+        return back(303);
         return redirect(config('fortify.home'), 303);
     }
 }
