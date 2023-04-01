@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('contacts', function (Blueprint $table) {
             $table->id();
-            $table->string('mobile')->unique();
-            $table->string('handle')->unique();
+            $table->foreignUuid('checkin_uuid');
+            $table->string('mobile')->nullable()->unique();
+            $table->string('handle')->nullable()->unique();
             $table->schemalessAttributes('data');
             $table->timestamp('mobile_verified_at')->nullable();
             $table->timestamps();

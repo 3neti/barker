@@ -25,7 +25,7 @@ class StoreCheckinRequest extends FormRequest
     {
         return [
             'mobile' => ['nullable', (new PhoneRule)->mobile()->country('PH')],
-            'email' => ['nullable', 'email'],
+            'handle' => ['nullable', 'string', 'max:100'],
         ];
     }
 

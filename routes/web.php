@@ -3,6 +3,7 @@
 use App\Http\Controllers\CurrentCampaignController;
 use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\CheckinController;
+use App\Http\Controllers\ContactController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -43,3 +44,6 @@ Route::middleware([
 });
 
 Route::webhooks('webhook-paynamics-paybiz', 'paynamics-paybiz');
+
+Route::resource('contacts', ContactController::class)
+    ->only(['show']);

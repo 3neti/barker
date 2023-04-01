@@ -22,6 +22,8 @@ class Hyperverge
 
     public static string $expiry = '';
 
+    public static string $resultEndpoint = '';
+
     #[ArrayShape([
         'appId' => "string",
         'appKey' => "string"
@@ -34,6 +36,7 @@ class Hyperverge
         ];
     }
 
+    //TODO: change to request
     public function endpoint(): string
     {
         return static::$endpoint;
@@ -57,5 +60,11 @@ class Hyperverge
             'defaultLanguage' => static::$defaultLanguage,
             'expiry' => static::$expiry,
         ];
+    }
+
+    //TODO: change to process
+    public function resultEndpoint(): string
+    {
+        return static::$resultEndpoint;
     }
 }

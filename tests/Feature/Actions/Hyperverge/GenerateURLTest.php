@@ -3,6 +3,8 @@
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use App\Actions\Hyperverge\GenerateURL;
+use App\Events\Hyperverge\URLGenerated;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Client\Request;
 use App\Classes\Hyperverge;
@@ -31,6 +33,7 @@ it('can generate the url', function () {
     $action = app(GenerateURL::class);
     $url = $this->faker->url();
     Http::fake([$action->hyperverge->endpoint() => Http::response(mockJsonResponse($url), 200)]);
+    Event::fake(URLGenerated::class);
 
     /*** act ***/
     $result = $action->run($transactionId);

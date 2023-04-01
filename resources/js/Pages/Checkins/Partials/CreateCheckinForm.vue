@@ -9,7 +9,7 @@ import {computed} from "vue";
 
 const form = useForm({
     mobile: null,
-    email: null,
+    handle: null,
 });
 
 const createCheckin = () => {
@@ -35,29 +35,29 @@ const createCheckin = () => {
             <!-- Form -->
             <div class="col-span-6 sm:col-span-4">
                 <!-- Mobile -->
-                <InputLabel for="mobile" value="SMS Channel" />
+                <InputLabel for="mobile" value="Mobile Number" />
                 <TextInput
-                    id="sms"
+                    id="mobile"
                     v-model="form.mobile"
                     type="text"
                     class="block w-full mt-1"
                     autofocus
-                    placeholder="09173011987"
+                    placeholder="e.g. (0917) 123-4567"
                 />
                 <InputError :message="form.errors.mobile" class="mt-2" />
 
 
-                <!-- Email -->
-                <InputLabel for="email" value="Email Channel" />
+                <!-- Handle -->
+                <InputLabel for="handle" value="Handle" />
                 <TextInput
-                    id="sms"
-                    v-model="form.email"
+                    id="handle"
+                    v-model="form.handle"
                     type="text"
                     class="block w-full mt-1"
                     autofocus
-                    placeholder="john.doe@email.com"
+                    placeholder="Name|Description of the contact"
                 />
-                <InputError :message="form.errors.email" class="mt-2" />
+                <InputError :message="form.errors.handle" class="mt-2" />
             </div>
         </template>
 

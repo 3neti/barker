@@ -3,7 +3,7 @@
 namespace App\Actions\Hyperverge;
 
 use Lorisleiva\Actions\Concerns\AsAction;
-use App\Events\URLGenerated;
+use App\Events\Hyperverge\URLGenerated;
 use App\Models\Checkin;
 
 class UpdateCheckinUrl

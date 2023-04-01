@@ -109,11 +109,11 @@ const availableTypes = computed(
 
                 <SectionBorder />
 
-                <!-- SMS Channel -->
+                <!-- Mobile Channel -->
                 <template v-if="channels.value?.includes('mobile')">
                     <InputLabel for="mobile" value="SMS Channel" />
                     <TextInput
-                        id="sms"
+                        id="mobile"
                         v-model="form.mobile"
                         type="text"
                         class="block w-full mt-1"
@@ -128,7 +128,7 @@ const availableTypes = computed(
                 <template v-if="channels.value?.includes('email')">
                     <InputLabel for="email" value="Email Channel" />
                     <TextInput
-                        id="sms"
+                        id="email"
                         v-model="form.email"
                         type="text"
                         class="block w-full mt-1"

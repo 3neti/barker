@@ -2,7 +2,7 @@
 
 namespace App\Actions\Hyperverge;
 
-use App\Events\{CheckinAdded, URLGenerated};
+use App\Events\{CheckinAdded, Hyperverge\URLGenerated};
 use Lorisleiva\Actions\Concerns\AsAction;
 use Illuminate\Support\Facades\Http;
 use App\Classes\Hyperverge;

@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\CheckinController;
-use App\Actions\Hyperverge\ProcessResult;
+use App\Actions\Hyperverge\RetrieveResult;
 use Illuminate\Support\Facades\Route;
 
-Route::get('hyperverge-api/result', ProcessResult::class)->name('hyperverge-result');
+Route::get('hyperverge-api/result', RetrieveResult::class)->name('hyperverge-result');
