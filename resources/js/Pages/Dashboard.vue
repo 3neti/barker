@@ -1,22 +1,5 @@
 <script setup>
-import relativeTime from 'dayjs/plugin/relativeTime';
-// import { router, usePage } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import dayjs from 'dayjs';
-
-// const formatter = new Intl.NumberFormat('en-PH', {
-//     style: 'currency',
-//     currency: 'PHP',
-// });
-//
-// const page = usePage()
-
-// Echo.private(`wallet.holder.${page.props.auth.user.id}`)
-//     .listen(".balance.updated", (e) => {
-//         router.get('/dashboard')
-//     })
-
-dayjs.extend(relativeTime);
 </script>
 
 <template>

@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreCampaignRequest;
-use App\Http\Requests\UpdateCampaignRequest;
-use Laravel\Jetstream\RedirectsActions;
+use App\Http\Requests\{StoreCampaignRequest, UpdateCampaignRequest};
+use Laravel\Jetstream\{Jetstream, RedirectsActions};
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
-use Laravel\Jetstream\Jetstream;
 use App\Actions\CreateCampaign;
 use Illuminate\Http\Request;
 use App\Models\Campaign;
@@ -49,11 +47,10 @@ class CampaignController extends Controller
      */
     public function store(StoreCampaignRequest $request): RedirectResponse
     {
-        $action = app(CreateCampaign::class);
         app(CreateCampaign::class)->run($request->user(), $request->all());
 
-//        return redirect(route('dashboard'));
-        return $this->redirectPath($action);
+        return redirect(route('checkins.index'));
+//        return $this->redirectPath($action);
     }
 
     /**

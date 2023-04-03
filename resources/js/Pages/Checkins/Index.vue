@@ -1,47 +1,29 @@
 <script setup>
 
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import TextInput from '@/Components/TextInput.vue';
-import Checkin from '@/Components/Checkin.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import SecondaryButton from '@/Components/SecondaryButton.vue'
-
-
-import {useForm, Head as Head, Link as Link, usePage, router} from "@inertiajs/vue3";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
+import {Head as Head, usePage, router} from "@inertiajs/vue3";
 import CampaignSelector from '@/Components/CampaignSelector.vue'
+import { computed } from 'vue';
 
 defineProps({checkins: Array});
 
-const formatter = new Intl.NumberFormat('en-PH', {
-    style: 'currency',
-    currency: 'PHP',
-});
-
-const page = usePage()
-
-const form = useForm({
-    mobile: '',
-});
-
-Echo.private(`wallet.holder.${page.props.auth.user.id}`)
-    .listen(".balance.updated", (e) => {
-        router.get('/dashboard')
-    })
-
-dayjs.extend(relativeTime);
-
+const formatter = new Intl.NumberFormat('en-PH', {style: 'currency', currency: 'PHP'});
+const balanceFloat = computed(
+    () => formatter.format(usePage().props.auth.user.balanceFloat)
+);
 const newCheckin = () => {
     router.get(route('checkins.create'))
 }
+Echo.private(`wallet.holder.${usePage().props.auth.user.id}`)
+    .listen(".balance.updated", (e) => {
+        router.get('/dashboard')
+    })
 </script>
 
 <template>
-    <Head title="Checkin"/>
-
+    <Head>
+        <title>Checkin</title>
+    </Head>
     <AppLayout>
         <template #header>
             <div class="flex items-center justify-between">
@@ -49,7 +31,7 @@ const newCheckin = () => {
                     <CampaignSelector/>
                 </div>
                 <div class="text-gray-800 dark:text-gray-200 leading-tight">
-                    {{ formatter.format($page.props.auth.user.balanceFloat) }}
+                    {{ balanceFloat }}
                 </div>
             </div>
         </template>
@@ -84,7 +66,7 @@ const newCheckin = () => {
                                     <span>Transmit Data</span>
                                 </button>
 
-                                <button @click="newCheckin" class="flex items-center justify-center w-1/2 px-5 py-2 text-sm tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 sm:w-auto gap-x-2 hover:bg-blue-600 dark:hover:bg-blue-500 dark:bg-blue-600">
+                                <button @click="newCheckin" disabled class="flex items-center justify-center w-1/2 px-5 py-2 text-sm tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 sm:w-auto gap-x-2 hover:bg-blue-600 dark:hover:bg-blue-500 dark:bg-blue-600">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
