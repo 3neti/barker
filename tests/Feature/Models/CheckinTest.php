@@ -90,3 +90,12 @@ test('checkin - updated eloquently', function () {
     expect($checkin->url)->toBe($url);
     expect($checkin->QRCodeURI)->toBe(generateQRCodeURI($url));
 });
+//
+//test('checkin - updated with retrieved_at', function () {
+//    $retrieved_at = now();
+//    $checkin = Checkin::factory()->create();
+//    $checkin->update(compact('retrieved_at'));
+//    $checkin->save();
+//    expect($checkin->retrieved_at)->toBe($retrieved_at);
+//    expect($checkin->data)->toBeArray();
+//});

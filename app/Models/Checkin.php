@@ -5,11 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Relations\{BelongsTo, HasOne, MorphTo};
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Support\Arr;
 use MatanYadaev\EloquentSpatial\Traits\HasSpatial;
 use MatanYadaev\EloquentSpatial\Objects\Point;
 use Illuminate\Database\Eloquent\Model;
-//use App\Traits\HasData;
+use Illuminate\Support\Arr;
 
 class Checkin extends Model
 {
@@ -22,9 +21,22 @@ class Checkin extends Model
     protected $casts = [
         'data' => 'array',
         'location' => Point::class,
+        'data_retrieved_at' => 'datetime'
     ];
 
+    protected $appends = ['QRCodeURI'];
+
 //    protected $appends = ['QRCodeURI', 'IdType', 'IdNumber', 'IdFullName', 'IdImageUrl', 'IdBirthdate'];
+
+    public static function makeFromAgent(User $agent): self
+    {
+        return self::make([
+            'agent_id' => $agent->id,
+            'campaign_id' => $agent->currentCampaign->id,
+        ]);
+    }
+
+    /** relations */
 
     public function agent(): BelongsTo
     {
@@ -45,6 +57,8 @@ class Checkin extends Model
     {
         return $this->hasOne(Contact::class);
     }
+
+    /** relation setters */
 
     public function setAgent(User $agent): self
     {
@@ -67,6 +81,8 @@ class Checkin extends Model
         return $this;
     }
 
+    /** attribute setters */
+
     public function setLocation(float $latitude, float $longitude): self
     {
         $location = new Point($latitude, $longitude);
@@ -81,6 +97,25 @@ class Checkin extends Model
 
         return $this;
     }
+
+    public function setData($data): self
+    {
+        $this->setAttribute('data', $data);
+        $this->forceFill(['data_retrieved_at' => now()]);
+
+        return $this;
+    }
+
+    /** computed */
+
+    public function dataRetrieved(): bool
+    {
+        $dataRetrievedAt = $this->getAttribute('data_retrieved_at');
+
+        return $dataRetrievedAt && $dataRetrievedAt <= now();
+    }
+
+    /** attributes */
 
     public function getQRCodeURIAttribute(): ?string
     {

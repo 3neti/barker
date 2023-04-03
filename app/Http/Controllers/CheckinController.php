@@ -44,17 +44,21 @@ class CheckinController extends Controller
     public function store(StoreCheckinRequest $request): RedirectResponse
     {
         $action = app(CreateCheckin::class);
-        $action->dispatch($request->user(), $request->all());
+        $agent = $request->user();
+        $action->dispatch($agent, $request->all());
 
-        return $this->redirectPath($action);
+        return to_route('checkins.show', ['checkin' => $agent->fresh()->current_checkin_uuid]);
+//        return $this->redirectPath($action);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Checkin $checkin)
+    public function show(Checkin $checkin): Response
     {
-        //
+        return Inertia::render('Checkins/Show', [
+            'checkin' => fn() => $checkin?->only('uuid', 'url', 'QRCodeURI'),
+        ]);
     }
 
     /**

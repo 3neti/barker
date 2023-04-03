@@ -40,7 +40,7 @@ Route::middleware([
         ->only(['create', 'store']);
     Route::put('/current-campaign', [CurrentCampaignController::class, 'update'])->name('current-campaign.update');
     Route::resource('checkins', CheckinController::class)
-        ->only(['index', 'create', 'store']);
+        ->only(['index', 'create', 'store', 'show']);
 });
 
 Route::webhooks('webhook-paynamics-paybiz', 'paynamics-paybiz');

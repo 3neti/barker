@@ -5,16 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Model;
-use App\Traits\HasData;
+use App\Traits\{HasData, HasMobile};
 
 class Contact extends Model
 {
     use HasFactory;
+    use HasMobile;
     use HasData;
 
     protected $fillable = ['mobile', 'handle'];
 
-    public function getRouteKeyName()
+    protected $appends = ['name', 'birthdate', 'address'];
+
+    public function getRouteKeyName(): string
     {
         return 'checkin_uuid';
     }
@@ -26,7 +29,7 @@ class Contact extends Model
 
     public function getNameAttribute(): string
     {
-        return $this->handle;
+        return $this->getAttribute('handle');
     }
 
     public function getBirthdateAttribute(): string

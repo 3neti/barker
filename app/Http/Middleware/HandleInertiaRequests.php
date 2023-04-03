@@ -49,6 +49,7 @@ class HandleInertiaRequests extends Middleware
                 if ($user && $userHasTeamFeatures) {
                     $user->currentTeam;
                     $user->currentCampaign;
+                    $user->currentCheckin;
                 }
 
                 return array_merge($user->toArray(), array_filter(

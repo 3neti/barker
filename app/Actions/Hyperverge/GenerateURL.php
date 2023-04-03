@@ -17,12 +17,11 @@ class GenerateURL
     {
         $body = array_merge(compact('transactionId'), $this->hyperverge->body());
         $response = Http::withHeaders($this->hyperverge->headers())->post($this->hyperverge->endpoint(), $body);
-
         $url = null;
         if ($response->successful()) {
             $url = $response->json('result.startKycUrl');
+            URLGenerated::dispatch($transactionId, $url);
         }
-        URLGenerated::dispatch($transactionId, $url);
 
         return $url;
     }

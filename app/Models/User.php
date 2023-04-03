@@ -128,4 +128,24 @@ class User extends Authenticatable implements Confirmable, Wallet, WalletFloat
 
         return true;
     }
+
+    public function currentCheckin()
+    {
+//        if (is_null($this->current_checkin_uuid)) {
+//            $this->switchCheckin($this->current_checkin_uuid);
+//        }
+
+        return $this->belongsTo(Checkin::class, 'current_checkin_uuid');
+    }
+
+    public function switchCheckin(Checkin $checkin)
+    {
+        $this->forceFill([
+            'current_checkin_uuid' => $checkin->uuid,
+        ])->save();
+
+        $this->setRelation('currentCheckin', $checkin);
+
+        return true;
+    }
 }

@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->foreignId('current_campaign_id')->nullable()->after('current_team_id');
+            $table->foreignUuid('current_checkin_uuid')->nullable()->after('current_campaign_id');
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('current_campaign_id');
+            $table->dropColumn('current_checkin_uuid');
         });
     }
 };

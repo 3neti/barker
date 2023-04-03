@@ -16,6 +16,7 @@ class CreateCheckin
         AddingCheckin::dispatch($agent);
         $checkin = tap(app(Checkin::class)->make($input), function ($checkin) use ($agent, $input) {
             $checkin->setAgent($agent)->setCampaign($agent->currentCampaign)->save();
+            $agent->switchCheckin($checkin);
             $contact = $checkin->contact()->create(Arr::only($input, ['mobile', 'handle']));
             $checkin->setPerson($contact);
             $checkin->save();
