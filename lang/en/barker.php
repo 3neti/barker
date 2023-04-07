@@ -14,9 +14,9 @@ return [
     'checkin' => [
         'header' => [
             'accounting' => [
-                'mobile' => 'Accounted via mobile',
-                'email' => 'Accounted via email',
-                'url' => 'accounted',
+                'mobile' => ":campaign - accounted via mobile",
+                'email' => ':campaign - accounted via email',
+                'url' => ':campaign - accounted',
             ],
             'authentication' => [
                 'mobile' => 'Authenticated via mobile',
@@ -31,7 +31,7 @@ return [
         ],
         'body' => [
             'accounting' => [
-                'mobile' => 'name: :name, birthdate: :birthdate, address: :address, reference: :reference',
+                'mobile' => "name: :name,\nbirthdate: :birthdate,\naddress: :address,\nreference: :reference",
                 'email' => '":name", ":birthdate", ":address", ":reference"',
                 'url' => '{name: ":name", birthdate: ":birthdate", address: ":address", reference: ":reference"}',
             ],
@@ -46,6 +46,12 @@ return [
                 'url' => '{name: ":name", birthdate: ":birthdate", address: ":address", reference: ":reference"}',
             ],
         ],
-
+    ],
+    'notification' => [
+        'checkin' => [
+            'campaign' => [
+                'sms' => ":subject\r\n:body",
+            ]
+        ],
     ],
 ];

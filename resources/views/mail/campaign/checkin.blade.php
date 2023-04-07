@@ -1,10 +1,10 @@
 <x-mail::message>
-# Notification
+# {{ $type }}
 
-The body of your message. {{ $type }}
+The body of your message.
 
 <x-mail::button :url="$url">
-Button Text
+References ---
 </x-mail::button>
 
 Thanks,<br>

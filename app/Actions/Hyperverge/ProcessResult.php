@@ -2,6 +2,7 @@
 
 namespace App\Actions\Hyperverge;
 
+use App\Events\Hyperverge\ResultProcessed;
 use App\Events\Hyperverge\ResultRetrieved;
 use App\Pipes\HydrateCheckinPersonData;
 use App\Pipes\HydrateCheckinPersonHandle;
@@ -25,6 +26,7 @@ class ProcessResult
             ])
             ->thenReturn();
         $checkin->person->save();
+        ResultProcessed::dispatch($checkin);
 
         return (null !== $checkin->person->data);
     }

@@ -4,18 +4,21 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\{HasData, HasMobile};
+
 
 class Contact extends Model
 {
     use HasFactory;
     use HasMobile;
     use HasData;
+    use Notifiable;
 
     protected $fillable = ['mobile', 'handle'];
 
-    protected $appends = ['name', 'birthdate', 'address'];
+    protected $appends = ['name', 'birthdate', 'address', 'reference'];
 
     public function getRouteKeyName(): string
     {
@@ -40,5 +43,10 @@ class Contact extends Model
     public function getAddressAttribute(): string
     {
         return 'Quezon City';
+    }
+
+    public function getReferenceAttribute(): string
+    {
+        return route('checkins.show', ['checkin' => $this->getAttribute('checkin_uuid')]);
     }
 }

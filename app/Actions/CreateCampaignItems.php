@@ -17,8 +17,8 @@ class CreateCampaignItems
             $subject = trans('barker.checkin.header')[$type][$channel];
             $template = trans('barker.checkin.body')[$type][$channel];
             $uri = match ($channel) {
-                'mobile' => __('sms::mobile?subject=:subject&body=:body', ['mobile' => $value, 'subject' => $subject]),
-                'email' => __('mailto::email?subject=:subject&body=:body', ['email' => $value, 'subject' => $subject]),
+                'mobile' => __('sms::mobile?subject=:subject&body=:template&type=:type', ['mobile' => $value, 'subject' => $subject, 'type' => $type]),
+                'email' => __('mailto::email?subject=:subject&body=:template&type=:type', ['email' => $value, 'subject' => $subject, 'type' => $type]),
                 'url' => add_query_params($value, ['reference' => 'put reference here']),
                 default => '',
             };

@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\Checkin;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Contact>
@@ -17,7 +18,7 @@ class ContactFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'checkin_uuid' => Checkin::factory()->create()->uuid,
         ];
     }
 }
