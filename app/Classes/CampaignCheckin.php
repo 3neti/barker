@@ -6,6 +6,7 @@ use App\Models\{CampaignItem, Checkin};
 use Illuminate\Database\Eloquent\Model;
 use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Pure;
+use Illuminate\Support\Arr;
 
 class CampaignCheckin
 {
@@ -49,7 +50,7 @@ class CampaignCheckin
     public function payload(): array
     {
         //hydrate the payload template with merged contact data
-        $payload_string_data = __($this->campaignItem->payload_template, $this->checkin->person->toArray());
+        $payload_string_data = __($this->campaignItem->payload_template, $this->getPersonFields());
 
         $uri_query_string_data = __($this->campaignItem->uri_template, [
             'campaign' => $this->campaignItem->campaign->name,
@@ -59,5 +60,11 @@ class CampaignCheckin
         parse_str($uri_query_string_data, $payload_array_data);
 
         return $payload_array_data;
+    }
+
+    protected function getPersonFields(): array
+    {
+        //e.g. ['name', 'address', 'birthdate', 'reference']
+        return Arr::only($this->checkin->person->toArray(), $this->checkin->person->getAppends());
     }
 }

@@ -2,9 +2,10 @@
 
 namespace App\Actions\Hyperverge;
 
+
 use Illuminate\Notifications\AnonymousNotifiable;
 use App\Notifications\CampaignNotification;
-use App\Events\Hyperverge\ResultRetrieved;
+use App\Events\Hyperverge\ResultProcessed;
 use Lorisleiva\Actions\Concerns\AsAction;
 use App\Classes\CampaignCheckin;
 use App\Classes\Barker;
@@ -23,7 +24,7 @@ class SendCampaignNotifications
         }
     }
 
-    public function asListener(ResultRetrieved $event)
+    public function asListener(ResultProcessed $event)
     {
         $this->handle($event->checkin);
     }

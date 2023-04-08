@@ -29,8 +29,7 @@ class CampaignNotification extends Notification
 
     public function toEngageSpark(object $notifiable): EngageSparkMessage
     {
-        $subject = $body = '';
-        extract($this->campaignCheckin->payload());
+        list('subject' => $subject, 'body' => $body) = $this->campaignCheckin->payload();
         $message = __('barker.notification.checkin.campaign.sms',
             compact('subject', 'body')
         );
