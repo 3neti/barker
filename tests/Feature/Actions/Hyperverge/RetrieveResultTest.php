@@ -476,6 +476,7 @@ function mockResultJsonResponse_working(string $transactionId): string
 }
 EOT;
 }
+
 function mockResultJsonResponse(string $transactionId): string
 {
     return <<<EOT

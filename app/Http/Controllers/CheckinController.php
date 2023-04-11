@@ -7,6 +7,7 @@ use App\Http\Requests\StoreCheckinRequest;
 use Laravel\Jetstream\RedirectsActions;
 use Illuminate\Http\RedirectResponse;
 use Laravel\Jetstream\Jetstream;
+use App\Enums\HypervergeModule;
 use App\Actions\CreateCheckin;
 use Illuminate\Http\Request;
 use App\Models\Checkin;
@@ -57,7 +58,10 @@ class CheckinController extends Controller
     public function show(Checkin $checkin): Response
     {
         return Inertia::render('Checkins/Show', [
-            'checkin' => fn() => $checkin?->only('uuid', 'url', 'QRCodeURI'),
+            'checkin' => fn() => $checkin?->only('uuid', 'url', 'QRCodeURI', 'agent', 'campaign', 'data_retrieved_at'),
+            'dataRetrieved' => $checkin?->dataRetrieved(),
+            'fieldsExtracted' => $checkin?->getFieldsExtracted(),
+            'details' => $checkin->getKYC()->application->modules[HypervergeModule::ID_VERIFICATION->value]->apiResponse->result->details
         ]);
     }
 

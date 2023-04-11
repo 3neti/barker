@@ -11,8 +11,9 @@ use MatanYadaev\EloquentSpatial\Traits\HasSpatial;
 use MatanYadaev\EloquentSpatial\Objects\Point;
 use Illuminate\Database\Eloquent\Model;
 use App\Data\Hyperverge\KYCData;
-use Illuminate\Support\Arr;
+use Illuminate\Support\{Arr, Str};
 use App\Enums\HypervergeIDCard;
+use Spatie\LaravelData\Data;
 
 class Checkin extends Model
 {
@@ -121,9 +122,38 @@ class Checkin extends Model
         return $dataRetrievedAt && $dataRetrievedAt <= now();
     }
 
-    public function getKYC(): KYCData
+    public function getKYC(): ?KYCData
     {
-        return KYCData::from($this->data);
+        return empty($this->data)
+            ? null
+            : KYCData::from($this->data);
+    }
+
+    public function getFieldsExtracted(): ?array
+    {
+        $details = $this->getKYC()->application->modules[HypervergeModule::ID_VERIFICATION->value]->apiResponse->result->details;
+        //sort values
+        $data = array_merge([
+            'type' => null,
+            'idNumber' => null,
+            'dateOfIssue' => null,
+            'dateOfExpiry' => null,
+            'countryCode' => null,
+            'mrzString' => null,
+        ], $details->fieldsExtracted->toArray());
+        //remove null values
+        $data = array_filter($data, static function ($var) {
+            return $var !== null;
+        });
+
+        //prettify keys
+        return array_flip(Arr::map(array_flip($data), function (string $value, string $key) {
+            return Str::of($value)
+                ->snake()
+                ->replace('_', ' ')
+                ->title()
+                ->value;
+        }));
     }
 
     /** attributes */
