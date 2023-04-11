@@ -19,7 +19,7 @@ Echo.private(`agent.${page.props.auth.user.id}`)
         router.get(route('checkins.show', {checkin: e.transactionId}))
     })
     .listen(".result.processed", (e) => {
-        router.get(route('checkins.show', {checkin: e.transactionId}))
+        router.get(route('checkins.show', {checkin: e.checkin.uuid}))
     })
 </script>
 
