@@ -22,5 +22,6 @@ Broadcast::channel('wallet.holder.{holderId}', function ($user, $holderId) {
 });
 
 Broadcast::channel('agent.{agentId}', function ($user, $agentId) {
+    return true;
     return (int) $user->id === (int) $agentId;
 });
