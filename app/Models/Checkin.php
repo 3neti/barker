@@ -131,6 +131,8 @@ class Checkin extends Model
 
     public function getFieldsExtracted(): ?array
     {
+        if (null == $this->getKYC()) return [];
+
         $details = $this->getKYC()->application->modules[HypervergeModule::ID_VERIFICATION->value]->apiResponse->result->details;
         //sort values
         $data = array_merge([
