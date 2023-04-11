@@ -4,7 +4,11 @@ namespace App\Providers;
 
 
 use App\Events\{CampaignAdded, CheckinAdded, Hyperverge\ResultProcessed, Hyperverge\ResultRetrieved, Hyperverge\URLGenerated};
-use App\Actions\Hyperverge\{GenerateURL, ProcessResult, SendCampaignNotifications, UpdateCheckinUrl};
+use App\Actions\Hyperverge\{GenerateURL,
+    ProcessResult,
+    SendCampaignNotifications,
+    SendCheckinNotification,
+    UpdateCheckinUrl};
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use App\Observers\{CampaignObserver, CheckinObserver, TeamObserver, UserObserver};
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -58,7 +62,8 @@ class EventServiceProvider extends ServiceProvider
             ProcessResult::class
         ],
         ResultProcessed::class => [
-            SendCampaignNotifications::class
+            SendCampaignNotifications::class,
+            SendCheckinNotification::class,
         ],
     ];
 

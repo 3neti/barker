@@ -2,13 +2,17 @@
 
 namespace App\Models;
 
+use App\Enums\HypervergeModule;
 use Illuminate\Database\Eloquent\Relations\{BelongsTo, HasOne, MorphTo};
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use MatanYadaev\EloquentSpatial\Traits\HasSpatial;
 use MatanYadaev\EloquentSpatial\Objects\Point;
 use Illuminate\Database\Eloquent\Model;
+use App\Data\Hyperverge\KYCData;
 use Illuminate\Support\Arr;
+use App\Enums\HypervergeIDCard;
 
 class Checkin extends Model
 {
@@ -19,12 +23,14 @@ class Checkin extends Model
     protected $fillable = ['url', 'uri', 'data', 'location'];
 
     protected $casts = [
-        'data' => 'array',
+        'data' => 'array', //don't change this, it has repercussions in data access
         'location' => Point::class,
-        'data_retrieved_at' => 'datetime'
+        'data_retrieved_at' => 'datetime',
     ];
 
     protected $appends = ['QRCodeURI'];
+
+    protected $visible = ['uuid', 'url', 'location', 'QRCodeURI', 'person'];
 
 //    protected $appends = ['QRCodeURI', 'IdType', 'IdNumber', 'IdFullName', 'IdImageUrl', 'IdBirthdate'];
 
@@ -115,13 +121,18 @@ class Checkin extends Model
         return $dataRetrievedAt && $dataRetrievedAt <= now();
     }
 
+    public function getKYC(): KYCData
+    {
+        return KYCData::from($this->data);
+    }
+
     /** attributes */
 
     public function getQRCodeURIAttribute(): ?string
     {
         $url = $this->getAttribute('url');
 
-        return generateQRCodeURI($url);;;
+        return generateQRCodeURI($url);
     }
 
     public function getWorkflowIdAttribute()
@@ -144,9 +155,11 @@ class Checkin extends Model
         return Arr::get($this->getAttribute('data'), config('domain.hyperverge.mapping.id_image_url'));
     }
 
-    public function getIdTypeAttribute()
+    protected function idType(): Attribute
     {
-        return Arr::get($this->getAttribute('data'), config('domain.hyperverge.mapping.id_type'));
+        return Attribute::make(
+            get: fn () => Arr::get($this->data, config('domain.hyperverge.mapping.id_type'))
+        );
     }
 
     public function getIdNumberAttribute()

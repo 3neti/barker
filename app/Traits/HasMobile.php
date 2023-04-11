@@ -2,8 +2,9 @@
 
 namespace App\Traits;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Arr;
+use libphonenumber\PhoneNumberFormat;
 use App\Classes\Phone;
 
 trait HasMobile
@@ -25,11 +26,19 @@ trait HasMobile
 
     public function scopeWithMobile(Builder $query, string $mobile): void
     {
-        $query->where('mobile', Phone::number($mobile));
+        $query->where('mobile', Phone::number($mobile, PhoneNumberFormat::E164));
     }
 
     static public function fromMobile($mobile): ?self
     {
         return self::withMobile($mobile)->first();
+    }
+
+    protected function mobile(): Attribute
+    {
+        return Attribute::make(
+            get: fn (string $value) => Phone::number($value, PhoneNumberFormat::INTERNATIONAL),
+            set: fn (string $value) => Phone::number($value, PhoneNumberFormat::E164),
+        );
     }
 }
