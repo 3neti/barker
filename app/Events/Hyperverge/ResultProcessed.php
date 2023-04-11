@@ -15,7 +15,7 @@ class ResultProcessed
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('agent.'. $this->checkin->agent->id),
+            new PrivateChannel('checkin.'. $this->checkin->uuid),
         ];
     }
 

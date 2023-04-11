@@ -22,6 +22,11 @@ Broadcast::channel('wallet.holder.{holderId}', function ($user, $holderId) {
 });
 
 Broadcast::channel('agent.{agentId}', function ($user, $agentId) {
-    return true;
+//    return true;
     return (int) $user->id === (int) $agentId;
+});
+
+Broadcast::channel('checkin.{uuid}', function ($user, $uuid) {
+    return true;
+    return (int) $user->id === (int) \App\Models\Checkin::find($uuid)->agent->id;
 });
