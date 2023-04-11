@@ -61,7 +61,12 @@ class CheckinController extends Controller
             'checkin' => fn() => $checkin?->only('uuid', 'url', 'QRCodeURI', 'agent', 'campaign', 'data_retrieved_at'),
             'dataRetrieved' => $checkin?->dataRetrieved(),
             'fieldsExtracted' => $checkin?->getFieldsExtracted(),
-            'details' => $checkin->getKYC()?->application->modules[HypervergeModule::ID_VERIFICATION->value]->apiResponse->result->details
+            'details' => $checkin
+                ->getKYC()?->application
+                ->modules[HypervergeModule::ID_VERIFICATION->value]
+                ->apiResponse
+                ->result
+                ->details
         ]);
     }
 

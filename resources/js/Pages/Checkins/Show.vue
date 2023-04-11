@@ -18,6 +18,9 @@ Echo.private(`agent.${page.props.auth.user.id}`)
     .listen(".url.generated", (e) => {
         router.get(route('checkins.show', {checkin: e.transactionId}))
     })
+    .listen(".result.processed", (e) => {
+        router.get(route('checkins.show', {checkin: e.transactionId}))
+    })
 </script>
 
 <template>
