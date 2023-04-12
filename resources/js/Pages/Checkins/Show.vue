@@ -14,14 +14,17 @@ defineProps({
 
 const page = usePage()
 
-Echo.private(`agent.${page.props.auth.user.id}`)
+// Echo.private(`agent.${page.props.auth.user.id}`)
+//     .listen(".url.generated", (e) => {
+//         router.get(route('checkins.show', {checkin: e.transactionId}))
+//     })
+
+Echo.private(`checkin.${page.props.checkin.uuid}`)
     .listen(".url.generated", (e) => {
         router.get(route('checkins.show', {checkin: e.transactionId}))
     })
-
-Echo.private(`checkin.${page.props.checkin.uuid}`)
     .listen(".result.processed", (e) => {
-        router.get(route('checkins.show', {checkin: e.checkin.uuid}))
+        router.get(route('checkins.show', {checkin: e.transactionId}))
     })
 
 </script>

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Broadcast;
+use App\Models\Checkin;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,12 +22,15 @@ Broadcast::channel('wallet.holder.{holderId}', function ($user, $holderId) {
     return (int) $user->id === (int) $holderId;
 });
 
-Broadcast::channel('agent.{agentId}', function ($user, $agentId) {
-//    return true;
-    return (int) $user->id === (int) $agentId;
-});
+//Broadcast::channel('agent.{agentId}', function ($user, $agentId) {
+////    return true;
+//    return (int) $user->id === (int) $agentId;
+//});
 
-Broadcast::channel('checkin.{uuid}', function ($user, $uuid) {
-    return true;
-    return (int) $user->id === (int) \App\Models\Checkin::find($uuid)->agent->id;
+//Broadcast::channel('checkin.{transactionId}', function ($user, $transactionId) {
+//    return $user->is(app(Checkin::class)->find($transactionId)->agent);
+//});
+
+Broadcast::channel('checkin.{checkin}', function ($user, Checkin $checkin) {
+    return $user->is($checkin->agent);
 });
