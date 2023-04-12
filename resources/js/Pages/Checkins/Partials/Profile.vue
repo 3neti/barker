@@ -8,8 +8,9 @@ import SectionBorder from '@/Components/SectionBorder.vue';
 
 const props = defineProps({
     checkin: Object,
-    details: Object,
-    fieldsExtracted: Array
+    fieldsExtracted: Array,
+    idImageUrl: String,
+    selfieImageUrl: String
 });
 
 </script>
@@ -27,6 +28,14 @@ const props = defineProps({
             <p>
                 Date/Time: {{ usePage().props.checkin.data_retrieved_at }}
             </p>
+            <!-- ID Image -->
+            <div class="mt-5">
+                <img :src="usePage().props.idImageUrl">
+            </div>
+            <!-- Selfie Image -->
+            <div class="mt-5">
+                <img :src="usePage().props.selfieImageUrl">
+            </div>
         </template>
 
         <template #content>
@@ -43,9 +52,6 @@ const props = defineProps({
                 </div>
             </template>
             <SectionBorder />
-            <!-- ID Image -->
-            <!-- Selfie Image -->
-
             <div class="mt-5">
                 <div>
                     <SecondaryButton type="button" @click="router.get(route('checkins.index'))">

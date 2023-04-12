@@ -158,6 +158,22 @@ class Checkin extends Model
         }));
     }
 
+    public function getIdImageUrl(): ?string
+    {
+        return $this->getKYC()?->application
+                ->modules[HypervergeModule::ID_VERIFICATION->value]
+                ->imageUrl
+            ?? null;
+    }
+
+    public function getSelfieImageUrl(): ?string
+    {
+        return $this->getKYC()?->application
+                ->modules[HypervergeModule::SELFIE_VERIFICATION->value]
+                ->imageUrl
+            ?? null;
+    }
+
     /** attributes */
 
     public function getQRCodeURIAttribute(): ?string

@@ -15,11 +15,8 @@ class URLGenerated implements ShouldBroadcast
 
     public function broadcastOn(): array
     {
-//        $checkin = app(Checkin::class)->find($this->transactionId);
-
         return [
             new PrivateChannel('checkin.'. $this->transactionId),
-//            new PrivateChannel('agent.'. $checkin->agent->id),
         ];
     }
 

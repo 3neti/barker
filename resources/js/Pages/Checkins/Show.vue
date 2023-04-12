@@ -8,16 +8,12 @@ import Profile from '@/Pages/Checkins/Partials/Profile.vue'
 defineProps({
     checkin: Object,
     dataRetrieved: Boolean,
-    details: Object,
-    fieldsExtracted: Array
+    fieldsExtracted: Array,
+    idImageUrl: String,
+    selfieImageUrl: String,
 });
 
 const page = usePage()
-
-// Echo.private(`agent.${page.props.auth.user.id}`)
-//     .listen(".url.generated", (e) => {
-//         router.get(route('checkins.show', {checkin: e.transactionId}))
-//     })
 
 Echo.private(`checkin.${page.props.checkin.uuid}`)
     .listen(".url.generated", (e) => {
@@ -39,7 +35,7 @@ Echo.private(`checkin.${page.props.checkin.uuid}`)
         <div>
             <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
                 <template v-if="dataRetrieved">
-                    <Profile :checkin="checkin" :details="details" :fieldsExtracted="fieldsExtracted"/>
+                    <Profile :checkin="checkin" :fieldsExtracted="fieldsExtracted" :idImageUrl="idImageUrl" :selfieImageUrl="selfieImageUrl"/>
                 </template>
                 <template v-else>
                     <QRCode :checkin="checkin" />
