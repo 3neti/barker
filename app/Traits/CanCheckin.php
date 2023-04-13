@@ -12,7 +12,7 @@ trait CanCheckin
 {
     public function initializeCanCheckin()
     {
-        $this->append(['birthdate', 'address', 'reference']);
+//        $this->append(['birthdate', 'address', 'reference']);
 //        $this->mergeCasts([
 //            'idType' => IDType::class
 //        ]);

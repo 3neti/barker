@@ -20,13 +20,14 @@ class Checkin extends Model
 
     protected $fillable = ['url', 'uri', 'data', 'location'];
 
+    protected $appends = ['QRCodeURI', 'data'];
+
     protected $casts = [
-//        'data' => 'array', //don't change this, it has repercussions in data access
         'location' => Point::class,
         'data_retrieved_at' => 'datetime',
     ];
 
-    protected $visible = ['uuid', 'url', 'location', 'QRCodeURI', 'person'];
+//    protected $visible = ['uuid', 'url', 'location', 'QRCodeURI', 'person', 'agent', 'data'];
 
     public static function makeFromAgent(User $agent): self
     {

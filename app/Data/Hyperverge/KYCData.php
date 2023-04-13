@@ -5,6 +5,7 @@ namespace App\Data\Hyperverge;
 use App\Pipes\Filters\AssociativeArray\{RemoveNulls, UpdateKeysFromSnakeToTitle, UpdateKeysToLowercase};
 use App\Enums\{HypervergeIDCard, HypervergeModule};
 use Spatie\LaravelData\Attributes\MapInputName;
+use App\Pipes\Filters\Text\StudlyToTitle;
 use Illuminate\Pipeline\Pipeline;
 use Spatie\LaravelData\Data;
 
@@ -18,6 +19,19 @@ class KYCData extends Data
         public ApplicationData $application
     ) {}
 
+    public function with(): array
+    {
+        return [
+            'idType' => $this->getIdType(),
+            'fieldsExtracted' => $this->getFieldsExtracted(),
+            'idImageUrl' => $this->getIdImageUrl(),
+            'selfieImageUrl' => $this->getSelfieImageUrl(),
+            'idChecks' => $this->getIDChecks(),
+            'selfieChecks' => $this->getSelfieChecks(),
+            'by' => config('app.name'),
+        ];
+    }
+
     protected function getDetails(HypervergeModule $module): DetailData
     {
         return $this->application
@@ -27,9 +41,14 @@ class KYCData extends Data
             ->details;
     }
 
-    public function getIdType(): HypervergeIDCard
+    public function getIdType(): ?string
     {
-        return $this->getDetails(HypervergeModule::ID_VERIFICATION)->idType;
+        return app(Pipeline::class)
+            ->send($this->getDetails(HypervergeModule::ID_VERIFICATION)->idType->name)
+            ->through([
+                StudlyToTitle::class,
+            ])
+            ->thenReturn();
     }
 
     public function getFieldsExtracted(): ?array

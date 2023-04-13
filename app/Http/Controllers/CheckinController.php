@@ -19,16 +19,17 @@ class CheckinController extends Controller
 {
     use RedirectsActions;
 
-    public function index(): Response
+    public function index(Request $request): Response
     {
         return Inertia::render('Checkins/Index', [
-            'checkins' => app(Checkin::class)
-//                ->with('agent:id,name')
-//                ->with('person:id,mobile,handle')
-//                ->whereBelongsTo(auth()->user(), 'agent')
-//                ->latest()
-        ->get()
-
+            'checkins' => Checkin::with('agent:id,name')
+                ->with('person:id,mobile,handle')
+                ->whereBelongsTo(auth()->user(), 'agent')
+                ->whereBelongsTo(auth()->user()->currentCampaign, 'campaign')
+                ->latest()->get(),
+            'campaign' => $campaign = $request->user()->currentCampaign,
+            'type' => $request->user()->currentTeam->campaignType($campaign),
+            'channels' => $campaign->campaignItems->pluck('channel')->all()
         ]);
     }
 

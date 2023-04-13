@@ -22,7 +22,7 @@ class Contact extends Model
 
     protected $appends = ['name'];
 
-    protected $hidden = ['id', 'updated_at', 'created_at', 'handle'];
+    protected $hidden = ['id', 'updated_at', 'created_at'];
 
     protected function name(): Attribute
     {
