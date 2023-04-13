@@ -17,9 +17,21 @@ class ApplicationData extends Data
         public DataCollection $modules
     ) {}
 
+    /**
+     * normally the results indices are numeric
+     * and there are 3 modules in the default application
+     * i.e. ID Verification Module, Selfie Verification Module and Face Check Module
+     * it is imperative to assign the module id as the index instead of 0,1,2
+     * which eliminates the need to iterate
+     *
+     * all we need now is to create an enum class of the module id options
+     * and apply it in choosing the module results
+     *
+     * @param mixed ...$payloads
+     * @return static
+     */
     public static function from(...$payloads): static
     {
-        //instead of numeric index, might as well make the moduleId
         $keyed = Arr::keyBy($payloads[0]['results'], 'moduleId');// crux :-)
         $payloads[0]['results'] = $keyed;
 

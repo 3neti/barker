@@ -27,7 +27,8 @@ class CheckinController extends Controller
 //                ->with('person:id,mobile,handle')
 //                ->whereBelongsTo(auth()->user(), 'agent')
 //                ->latest()
-                ->get()
+        ->get()
+
         ]);
     }
 
@@ -60,9 +61,11 @@ class CheckinController extends Controller
         return Inertia::render('Checkins/Show', [
             'checkin' => fn() => $checkin?->only('uuid', 'url', 'QRCodeURI', 'agent', 'campaign', 'data_retrieved_at'),
             'dataRetrieved' => $checkin?->dataRetrieved(),
-            'fieldsExtracted' => $checkin?->getFieldsExtracted(),
-            'idImageUrl' => $checkin?->getIdImageUrl(),
-            'selfieImageUrl' => $checkin?->getSelfieImageUrl(),
+            'fieldsExtracted' => $checkin?->data?->getFieldsExtracted(),
+            'idChecks' => $checkin?->data?->getIdChecks(),
+            'selfieChecks' => $checkin?->data?->getSelfieChecks(),
+            'idImageUrl' => $checkin?->data?->getIdImageUrl(),
+            'selfieImageUrl' => $checkin?->data?->getSelfieImageUrl(),
         ]);
     }
 

@@ -30,15 +30,17 @@ class RetrieveResult
      */
     public function handle(Checkin $checkin): bool
     {
+        $success = false;
         $body = ['transactionId' => $checkin->getAttribute('uuid')];
-        tap($this->getHypervergeResponse($body), function ($response) use ($checkin) {
+        tap($this->getHypervergeResponse($body), function ($response) use ($checkin, &$success) {
             if ($response->successful()) {
                 $checkin->setData($response->json())->save();
                 ResultRetrieved::dispatch($checkin);
+                $success = true;
             }
         });
 
-        return (null !== $checkin->getAttribute('data'));
+        return $success;
     }
 
     /**

@@ -2,18 +2,15 @@
 
 namespace App\Models;
 
-use App\Enums\HypervergeModule;
 use Illuminate\Database\Eloquent\Relations\{BelongsTo, HasOne, MorphTo};
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use MatanYadaev\EloquentSpatial\Traits\HasSpatial;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use MatanYadaev\EloquentSpatial\Objects\Point;
 use Illuminate\Database\Eloquent\Model;
 use App\Data\Hyperverge\KYCData;
-use Illuminate\Support\{Arr, Str};
-use App\Enums\HypervergeIDCard;
-use Spatie\LaravelData\Data;
+use Illuminate\Support\Arr;
 
 class Checkin extends Model
 {
@@ -24,16 +21,12 @@ class Checkin extends Model
     protected $fillable = ['url', 'uri', 'data', 'location'];
 
     protected $casts = [
-        'data' => 'array', //don't change this, it has repercussions in data access
+//        'data' => 'array', //don't change this, it has repercussions in data access
         'location' => Point::class,
         'data_retrieved_at' => 'datetime',
     ];
 
-    protected $appends = ['QRCodeURI'];
-
     protected $visible = ['uuid', 'url', 'location', 'QRCodeURI', 'person'];
-
-//    protected $appends = ['QRCodeURI', 'IdType', 'IdNumber', 'IdFullName', 'IdImageUrl', 'IdBirthdate'];
 
     public static function makeFromAgent(User $agent): self
     {
@@ -122,59 +115,17 @@ class Checkin extends Model
         return $dataRetrievedAt && $dataRetrievedAt <= now();
     }
 
-    public function getKYC(): ?KYCData
-    {
-        return empty($this->data)
-            ? null
-            : KYCData::from($this->data);
-    }
-
-    public function getFieldsExtracted(): ?array
-    {
-        if (null == $this->getKYC()) return [];
-
-        $details = $this->getKYC()->application->modules[HypervergeModule::ID_VERIFICATION->value]->apiResponse->result->details;
-        //sort values
-        $data = array_merge([
-            'type' => null,
-            'idNumber' => null,
-            'dateOfIssue' => null,
-            'dateOfExpiry' => null,
-            'countryCode' => null,
-            'mrzString' => null,
-        ], $details->fieldsExtracted->toArray());
-        //remove null values
-        $data = array_filter($data, static function ($var) {
-            return $var !== null;
-        });
-
-        //prettify keys
-        return array_flip(Arr::map(array_flip($data), function (string $value, string $key) {
-            return Str::of($value)
-                ->snake()
-                ->replace('_', ' ')
-                ->title()
-                ->value;
-        }));
-    }
-
-    public function getIdImageUrl(): ?string
-    {
-        return $this->getKYC()?->application
-                ->modules[HypervergeModule::ID_VERIFICATION->value]
-                ->imageUrl
-            ?? null;
-    }
-
-    public function getSelfieImageUrl(): ?string
-    {
-        return $this->getKYC()?->application
-                ->modules[HypervergeModule::SELFIE_VERIFICATION->value]
-                ->imageUrl
-            ?? null;
-    }
-
     /** attributes */
+
+    protected function data(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => $value
+                ? KYCData::from((array) json_decode($value, true))
+                : null,
+            set: fn ($value) => json_encode($value),
+        );
+    }
 
     public function getQRCodeURIAttribute(): ?string
     {
@@ -203,6 +154,7 @@ class Checkin extends Model
         return Arr::get($this->getAttribute('data'), config('domain.hyperverge.mapping.id_image_url'));
     }
 
+    //TODO: deprecate
     protected function idType(): Attribute
     {
         return Attribute::make(

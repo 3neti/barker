@@ -3,9 +3,10 @@
 namespace App\Data\Hyperverge;
 
 use Illuminate\Support\Collection;
+use JetBrains\PhpStorm\ArrayShape;
 use Spatie\LaravelData\Optional;
-use Spatie\LaravelData\Data;
 use App\Enums\HypervergeIDCard;
+use Spatie\LaravelData\Data;
 
 class DetailData extends Data
 {
@@ -28,5 +29,13 @@ class DetailData extends Data
         });
 
         return $properties;
+    }
+
+    #[ArrayShape(['by' => "string"])]
+    public function with(): array
+    {
+        return [
+            'by' => config('app.name')
+        ];
     }
 }

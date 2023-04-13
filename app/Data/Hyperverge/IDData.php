@@ -6,11 +6,21 @@ use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
 use Spatie\LaravelData\Attributes\WithCast;
 use Illuminate\Support\Collection;
 use Spatie\LaravelData\Data;
+use Spatie\LaravelData\Lazy;
 use DateTime;
+use Spatie\LaravelData\Optional;
+
 
 class IDData extends Data
 {
     public function __construct(
+        public ?string $type,
+        public ?string $idNumber,
+        public ?string $dateOfIssue,
+        public ?string $dateOfExpiry,
+        public ?string $countryCode,
+        public ?string $mrzString,
+
         public ?string $firstName,
         public ?string $middleName,
         public ?string $lastName,
@@ -18,13 +28,10 @@ class IDData extends Data
 //        #[WithCast(DateTimeInterfaceCast::class, format: 'd-m-Y')]
 //        public ?DateTime $dateOfBirth,
         public ?string $dateOfBirth,
-        public ?string $dateOfIssue,
-        public ?string $dateOfExpiry,
-        public ?string $countryCode,
-        public ?string $type,
+
         public ?string $address,
         public ?string $gender,
-        public ?string $idNumber,
+
         public ?string $placeOfBirth,
         public ?string $placeOfIssue,
         public ?int $yearOfBirth,
@@ -34,7 +41,7 @@ class IDData extends Data
         public ?string $husbandName,
         public ?string $spouseName,
         public ?string $nationality,
-        public ?string $mrzString,
+
         public ?string $homeTown,
     ) {}
 
