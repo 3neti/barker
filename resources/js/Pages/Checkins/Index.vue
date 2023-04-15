@@ -10,16 +10,16 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
 
 defineProps({
-    checkins: Object,
     campaign: Object,
-    type: Array,
-    channels: Array
+    type: String,
+    channels: Array,
 });
 
 const formatter = new Intl.NumberFormat('en-PH', {style: 'currency', currency: 'PHP'});
 const balanceFloat = computed(
     () => formatter.format(usePage().props.auth.user.balanceFloat)
 );
+
 const canCheckin = computed(
     () => usePage().props.auth.user.campaigns?.length > 0
 );
@@ -30,12 +30,6 @@ const newCheckin = () => {
 
 const showCheckin = (transactionId) => {
     router.get(route('checkins.show', { checkin: transactionId }))
-}
-
-const toTitleCase = (str) => {
-    return str.toLowerCase().replace(/(^|\s|-|\')(\w)/g, function (match) {
-        return match.toUpperCase();
-    });
 }
 
 const showData = ref(false);
@@ -64,8 +58,9 @@ Echo.private(`wallet.holder.${usePage().props.auth.user.id}`)
                     {{ balanceFloat }}
                 </div>
             </div>
-        </template>
-        <div class="py-12">
+        </template>s }}
+        <template v-if="true">
+            <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
                     <section class="container px-4 mx-auto">
@@ -74,9 +69,9 @@ Echo.private(`wallet.holder.${usePage().props.auth.user.id}`)
                             <!-- Table Label -->
                             <div>
                                 <div class="flex items-center gap-x-3">
-                                    <h2 class="text-lg font-medium text-gray-800 dark:text-white">{{ toTitleCase(usePage().props.type.key) }} requests</h2>
+                                    <h2 class="text-lg font-medium text-gray-800 dark:text-white">{{ type }} requests</h2>
 
-                                    <span class="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400">{{ checkins.length }} records</span>
+                                    <span class="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400">{{ usePage().props.campaign?.checkins.length }} record<template v-show="usePage().props.campaign?.checkins.length !== 1">s</template></span>
                                 </div>
 
                                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-300">{{ usePage().props.channels }}</p>
@@ -136,11 +131,12 @@ Echo.private(`wallet.holder.${usePage().props.auth.user.id}`)
                                 <input type="text" placeholder="Search" class="block w-full py-1.5 pr-5 text-gray-700 bg-white border border-gray-200 rounded-lg md:w-80 placeholder-gray-400/70 pl-11 rtl:pr-11 rtl:pl-5 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40">
                             </div>
                         </div>
-
+                        <!-- Table -->
                         <div class="flex flex-col mt-6">
                             <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                                 <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
                                     <div class="overflow-hidden border border-gray-200 dark:border-gray-700 md:rounded-lg">
+                                        <template v-if="true">
                                         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                             <!-- Headers -->
                                             <thead class="bg-gray-50 dark:bg-gray-800">
@@ -177,67 +173,75 @@ Echo.private(`wallet.holder.${usePage().props.auth.user.id}`)
                                             <!-- Body -->
                                             <tbody class="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
                                             <!-- Start of row -->
-                                            <tr v-for="checkin in usePage().props.checkins" :key="checkin.id">
+                                            <tr v-for="checkin in usePage().props.campaign?.checkins" :key="checkin.id">
                                                 <!-- Contact Column -->
                                                 <td class="px-4 py-4 text-sm font-medium whitespace-nowrap">
                                                     <div>
-                                                        <h2 class="font-medium text-gray-800 dark:text-white ">{{ checkin.person.name }}</h2>
-                                                        <p class="text-sm font-normal text-gray-600 dark:text-gray-400">{{ dayjs(checkin.data_retrieved_at).fromNow() }}</p>
+                                                        <h2 class="font-medium text-gray-800 dark:text-white ">{{ checkin.person.mobile }}</h2>
+                                                        <p class="text-sm font-normal text-gray-600 dark:text-gray-400">{{ dayjs(checkin.created_at).fromNow() }}</p>
                                                     </div>
                                                 </td>
                                                 <!-- Column 2 -->
                                                 <td class="px-8 py-4 text-sm font-medium whitespace-nowrap">
-                                                    <div class="inline px-3 py-1 text-sm font-normal rounded-full text-blue-500 gap-x-2 bg-blue-100/60 dark:bg-gray-800">
-                                                        {{ checkin.data.idType }}
-                                                    </div>
+                                                    <template v-if="checkin.data?.idType">
+                                                        <div class="inline px-3 py-1 text-sm font-normal rounded-full text-blue-500 gap-x-2 bg-blue-100/60 dark:bg-gray-800">
+                                                            {{ checkin.data?.idType }}
+                                                        </div>
+                                                    </template>
+                                                    <template v-else>
+                                                        <h2 class="font-medium text-gray-800 dark:text-white ">saglit...</h2>
+                                                    </template>
                                                 </td>
                                                 <!-- Column 3 -->
                                                 <td class="px-12 py-4 text-sm whitespace-nowrap">
-                                                    <div v-for="(value, index) in checkin.data.fieldsExtracted" class="flex flex-wrap items-center gap-x-2 gap-y-1">
-                                                        <template v-if="showData">
-                                                            <p class="px-3 py-1 text-sm text-emerald-500 rounded-full dark:bg-gray-800 bg-emerald-100/60">{{ value }}</p>
-                                                        </template>
-                                                        <template v-else>
-                                                            <p class="px-3 py-1 text-sm text-blue-500 rounded-full dark:bg-gray-800 bg-blue-100/60">{{ index }}</p>
-                                                        </template>
-                                                    </div>
+                                                    <template v-if="checkin.data?.fieldsExtracted">
+                                                        <div v-for="(value, index) in checkin.data?.fieldsExtracted" class="flex flex-wrap items-center gap-x-2 gap-y-1">
+                                                            <template v-if="showData">
+                                                                <p class="px-3 py-1 text-sm text-emerald-500 rounded-full dark:bg-gray-800 bg-emerald-100/60">{{ value }}</p>
+                                                            </template>
+                                                            <template v-else>
+                                                                <p class="px-3 py-1 text-sm text-blue-500 rounded-full dark:bg-gray-800 bg-blue-100/60">{{ index }}</p>
+                                                            </template>
+                                                        </div>
+                                                    </template>
+                                                    <template v-else>
+                                                        <h2 class="font-medium text-gray-800 dark:text-white ">stand by...</h2>
+                                                    </template>
                                                 </td>
                                                 <!-- Column 4 -->
                                                 <td class="px-12 py-4 text-sm whitespace-nowrap">
-                                                    <div v-for="(value, index) in checkin.data.selfieChecks" class="flex flex-wrap items-center gap-x-2 gap-y-1">
-                                                        <template v-if="value == 'no'">
-                                                            <p class="px-3 py-1 text-sm text-gray-500 rounded-full dark:bg-gray-800 bg-gray-100/60"><del>{{ index }}</del></p>
-                                                        </template>
-                                                        <template v-else>
-                                                            <p class="px-3 py-1 text-sm text-red-500 rounded-full dark:bg-gray-800 bg-red-100/60">{{ index }}</p>-->
-                                                        </template>
-<!--                                                        <img class="object-cover w-6 h-6 -mx-1 border-2 border-white rounded-full dark:border-gray-700 shrink-0" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=256&q=80" alt="">-->
-<!--                                                        <p class="px-3 py-1 text-sm text-red-500 rounded-full dark:bg-gray-800 bg-red-100/60">RETAKE</p>-->
-<!--                                                        <p class="px-3 py-1 text-sm text-emerald-500 rounded-full dark:bg-gray-800 bg-emerald-100/60">live face</p>-->
-<!--                                                        <p class="px-3 py-1 text-sm text-gray-500 rounded-full dark:bg-gray-800 bg-gray-100/60"><del>blur</del></p>-->
-<!--                                                        <p class="px-3 py-1 text-sm text-gray-500 rounded-full dark:bg-gray-800 bg-gray-100/60"><del>eyes closed</del></p>-->
-<!--                                                        <p class="px-3 py-1 text-sm text-gray-500 rounded-full dark:bg-gray-800 bg-gray-100/60"><del>mask present</del></p>-->
-<!--                                                        <p class="px-3 py-1 text-sm text-gray-500 rounded-full dark:bg-gray-800 bg-gray-100/60"><del>multiple faces</del></p>-->
-                                                    </div>
+                                                    <template v-if="checkin.data?.selfieChecks">
+                                                        <img class="object-cover w-6 h-6 -mx-1 border-2 border-white rounded-full dark:border-gray-700 shrink-0" :src="checkin.data?.selfieImageUrl" alt="">
+                                                        <div v-for="(value, index) in checkin.data?.selfieChecks" class="flex flex-wrap items-center gap-x-2 gap-y-1">
+                                                            <template v-if="value == 'no'">
+                                                                <p class="px-3 py-1 text-sm text-gray-500 rounded-full dark:bg-gray-800 bg-gray-100/60"><del>{{ index }}</del></p>
+                                                            </template>
+                                                            <template v-else>
+                                                                <p class="px-3 py-1 text-sm text-red-500 rounded-full dark:bg-gray-800 bg-red-100/60">{{ index }}</p>-->
+                                                            </template>
+                                                            <!--                                                        <p class="px-3 py-1 text-sm text-red-500 rounded-full dark:bg-gray-800 bg-red-100/60">RETAKE</p>&ndash;&gt;-->
+                                                        </div>
+                                                    </template>
+                                                    <template v-else>
+                                                        <h2 class="font-medium text-gray-800 dark:text-white ">apoyar...</h2>
+                                                    </template>
                                                 </td>
                                                 <!-- Column 5 -->
                                                 <td class="px-4 py-4 text-sm whitespace-nowrap">
-                                                    <div v-for="(value, index) in checkin.data.idChecks" class="flex flex-wrap items-center gap-x-2 gap-y-1">
-                                                        <template v-if="value == 'no'">
-                                                            <p class="px-3 py-1 text-sm text-gray-500 rounded-full dark:bg-gray-800 bg-gray-100/60"><del>{{ index }}</del></p>
-                                                        </template>
-                                                        <template v-else>
-                                                            <p class="px-3 py-1 text-sm text-red-500 rounded-full dark:bg-gray-800 bg-red-100/60">{{ index }}</p>-->
-                                                        </template>
-<!--                                                        <p class="px-3 py-1 text-sm text-emerald-500 rounded-full dark:bg-gray-800 bg-emerald-100/60">{{ index }}:{{ value }}</p>-->
-<!--                                                        <img class="object-cover w-6 h-6 -mx-1 border-2 border-white rounded-full dark:border-gray-700 shrink-0" src="https://prod-audit-portal-sgp.s3.ap-southeast-1.amazonaws.com/gkyc-ap-southeast-1/readId/2023-02-24/12dqkm/1677231216715-f9183f16-d26c-492c-84b8-d89a19025c31/cropped.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=ASIAZRKK5ZMRZ3IN3VWS%2F20230224%2Fap-southeast-1%2Fs3%2Faws4_request&X-Amz-Date=20230224T121750Z&X-Amz-Expires=900&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEGwaCmFwLXNvdXRoLTEiRjBEAiAU9QkLu6LeGVALccMsO5LeSqgnGH1UWJpgvQSty8uyPwIgAklKiz0%2F8Sij2YvWNFTAMMorMl7ssS87AYZLwHyJeAcqvwUIFRABGgw2NTU2NzY1MjUzNDciDM3VbaaaWD8Xi%2FKTXiqcBePfcoo%2FmE33G5Y9Tyk1mqcJfEa1Ufgt9bi%2FKPGKqebTgdyMrG6bGZGn%2BcB2xyZkztmUJ%2ByzZeaBG9stEZKwuEZFyQxXw6kF2iSIkWZq3%2F7ZThb9FDhMP0DjYMEdimfQO45BSbsJAZ%2BTEV1lttF1qOOUrXSOs5W%2BCJhW06RgeiPh6xzCoDv236MAswmsEE%2BWzc6ca28Eeu9d71Mas0P%2FJti0pktsd%2BZbIG0PRkfrOGyaS3EXRbZV4Ju5JOAhyq%2FaMoPPPSi35XIOiRGCOyo7y2TX1y6Qra%2BAmVFlFGqNrXBbU6w0Iht%2F%2B5PfYJsrCxMCSCNZuqCwLuGU5J7EN1u5FRyYipNWo%2FujTLeeuX4r1xWyx2iIz1ZrKVMOT5%2B%2Fkmjl7Rgtzf1DluF4OMmwn942m%2BNS8niMahYODiA2%2FuC9b1DlIJ7bSk4XzavkkxtbhTNOXOs5q2dm%2Bl92ZFb9oNxJClV1bXh36ML8XKMbJH7CI62bnm4O5PPMVfKiHPrsGrbSmNylHAc2lgWuMaMAN1hsePBp%2Fv%2FFe8drrYs5Nskvn1RuDFEN76xW59kXKikz2%2FtFD5UkPZrBJ2F2qYCaD6FjjRpL4VNoObfMygtYBvqCdPH8JZSa3fAWlYp%2FngnGBAYbjdPV0Y6oYOqd5sHrf8z0qW9aFAYgkwWoEH%2B6ExkdW0IQ5QHr1w%2FB8D2gIcg2AuyFRBtkV5Dq0spy6R8nt%2FTKneq8RxONnEK6EuxkhbPqMz3yka2lN%2F3E2r3gkSWE33nobIRR0dZNVK8g1o2AdWKDR8KBr%2FOqANI0ITQV306bYZAvJwctyZcxxRfvcQuuPQi0KJs9cA3%2Bfw55zX5jX4cbz6u9c3FLK35BHR2Qh%2B%2B68BOCSbVXXZWfn9D5dbdFMNzM4p8GOrIBaFnGHF3wAAOAQ8K6ZRHvQ6%2FQysVnYZlQihROYF%2FWDWPOUrPbUGij%2FT1zb%2F1L42ifBOWTdcJYhSDxXX%2FKAtOiyl3%2B1zlYKVyjwe84g81wcBF8q7ancEX7XUtnVGqCRgdWlkwcq6wqX%2FY6GGLNtH3QfNOmpTmZ456Gf7Wa%2Ffu4enLNEGOgD2TzODD9J8AjS94o9xTvkP%2FCqZKgikDO3NvRxnULHfTeiF%2Fo7ukCFIgfr3twsA%3D%3D&X-Amz-Signature=dc26b51a73c64fe249d42e68e32420e84c4d7c46aa3918ae1aa49eea33154272&X-Amz-SignedHeaders=host" alt="">-->
-<!--                                                        <p class="px-3 py-1 text-sm text-emerald-500 rounded-full dark:bg-gray-800 bg-emerald-100/60">PASS</p>-->
-<!--                                                        <p class="px-3 py-1 text-sm text-red-500 rounded-full dark:bg-gray-800 bg-red-100/60">blur</p>-->
-<!--                                                        <p class="px-3 py-1 text-sm text-gray-500 rounded-full dark:bg-gray-800 bg-gray-100/60"><del>glare</del></p>-->
-<!--                                                        <p class="px-3 py-1 text-sm text-gray-500 rounded-full dark:bg-gray-800 bg-gray-100/60"><del>black and white</del></p>-->
-<!--                                                        <p class="px-3 py-1 text-sm text-gray-500 rounded-full dark:bg-gray-800 bg-gray-100/60"><del>captured from screen</del></p>-->
-<!--                                                        <p class="px-3 py-1 text-sm text-gray-500 rounded-full dark:bg-gray-800 bg-gray-100/60"><del>partial id</del></p>-->
-                                                    </div>
+                                                    <template v-if="checkin.data?.idChecks">
+                                                        <img class="object-cover w-6 h-6 -mx-1 border-2 border-white rounded-full dark:border-gray-700 shrink-0" :src="checkin.data?.idImageUrl" alt="">
+                                                        <div v-for="(value, index) in checkin.data?.idChecks" class="flex flex-wrap items-center gap-x-2 gap-y-1">
+                                                            <template v-if="value == 'no'">
+                                                                <p class="px-3 py-1 text-sm text-gray-500 rounded-full dark:bg-gray-800 bg-gray-100/60"><del>{{ index }}</del></p>
+                                                            </template>
+                                                            <template v-else>
+                                                                <p class="px-3 py-1 text-sm text-red-500 rounded-full dark:bg-gray-800 bg-red-100/60">{{ index }}</p>-->
+                                                            </template>
+                                                        </div>
+                                                    </template>
+                                                    <template v-else>
+                                                        <h2 class="font-medium text-gray-800 dark:text-white ">mantenere...</h2>
+                                                    </template>
                                                 </td>
                                                 <!-- Column 6 -->
                                                 <td class="px-4 py-4 text-sm whitespace-nowrap">
@@ -251,6 +255,7 @@ Echo.private(`wallet.holder.${usePage().props.auth.user.id}`)
                                             <!-- End of row -->
                                             </tbody>
                                         </table>
+                                        </template>
                                     </div>
                                 </div>
                             </div>
@@ -287,6 +292,6 @@ Echo.private(`wallet.holder.${usePage().props.auth.user.id}`)
                 </div>
             </div>
         </div>
-
+        </template>
     </AppLayout>
 </template>

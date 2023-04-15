@@ -194,4 +194,9 @@ class Campaign extends Model
 
         $this->teams()->detach($team);
     }
+
+    public function checkins()
+    {
+        return $this->hasMany(Checkin::class);
+    }
 }

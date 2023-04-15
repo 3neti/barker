@@ -21,16 +21,13 @@ class CheckinController extends Controller
 
     public function index(Request $request): Response
     {
-        return Inertia::render('Checkins/Index', [
-            'checkins' => Checkin::with('agent:id,name')
-                ->with('person:id,mobile,handle')
-                ->whereBelongsTo(auth()->user(), 'agent')
-                ->whereBelongsTo(auth()->user()->currentCampaign, 'campaign')
-                ->latest()->get(),
-            'campaign' => $campaign = $request->user()->currentCampaign,
-            'type' => $request->user()->currentTeam->campaignType($campaign),
-            'channels' => $campaign->campaignItems->pluck('channel')->all()
-        ]);
+        $campaign = tap($request->user()->currentCampaign, function ($campaign) {
+            $campaign?->checkins->load(['person:id,mobile,handle']);
+        });
+        $type = $campaign?->teams->where('id', $request->user()->currentTeam->id)->first()->enlistment->type ?? '';
+        $channels = $campaign?->campaignItems->pluck('channel')->all();
+
+        return Inertia::render('Checkins/Index', compact('campaign', 'type', 'channels'));
     }
 
     public function create(Request $request)
