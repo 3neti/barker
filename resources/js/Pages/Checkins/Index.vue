@@ -1,42 +1,35 @@
 <script setup>
 
-import AppLayout from '@/Layouts/AppLayout.vue';
-import {Head as Head, usePage, router} from "@inertiajs/vue3";
 import CampaignSelector from '@/Components/CampaignSelector.vue'
+import {Head as Head, usePage, router} from "@inertiajs/vue3";
+import relativeTime from 'dayjs/plugin/relativeTime';
+import AppLayout from '@/Layouts/AppLayout.vue';
 import {computed, ref} from 'vue';
 import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
 
 dayjs.extend(relativeTime);
-
 defineProps({
     campaign: Object,
-    type: String,
     channels: Array,
+    type: String,
 });
-
 const formatter = new Intl.NumberFormat('en-PH', {style: 'currency', currency: 'PHP'});
 const balanceFloat = computed(
     () => formatter.format(usePage().props.auth.user.balanceFloat)
 );
-
-const canCheckin = computed(
-    () => usePage().props.auth.user.campaigns?.length > 0
-);
-
-const newCheckin = () => {
-    router.get(route('checkins.create'))
-}
-
 const showCheckin = (transactionId) => {
     router.get(route('checkins.show', { checkin: transactionId }))
 }
-
-const showData = ref(false);
-
+const canCheckin = computed(
+    () => usePage().props.auth.user.campaigns?.length > 0
+);
+const newCheckin = () => {
+    router.get(route('checkins.create'))
+}
 const toggleShowData = () => {
     showData.value = ! showData.value;
 };
+const showData = ref(false);
 
 Echo.private(`wallet.holder.${usePage().props.auth.user.id}`)
     .listen(".balance.updated", (e) => {

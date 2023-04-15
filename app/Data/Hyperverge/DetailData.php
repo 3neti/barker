@@ -2,16 +2,14 @@
 
 namespace App\Data\Hyperverge;
 
+use Spatie\LaravelData\{Data, Optional};
 use Illuminate\Support\Collection;
 use JetBrains\PhpStorm\ArrayShape;
-use Spatie\LaravelData\Optional;
-use App\Enums\HypervergeIDCard;
-use Spatie\LaravelData\Data;
 
 class DetailData extends Data
 {
     public function __construct(
-        public HypervergeIDCard|Optional $idType,
+        public ?string                   $idType,
         public IDData|Optional           $fieldsExtracted,
         public string|Optional           $croppedImageUrl,
         public bool|Optional             $liveFace,

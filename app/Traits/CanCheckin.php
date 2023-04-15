@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Support\Arr;
 use App\Models\Checkin;
-use App\Enums\HypervergeIDCard;
 
 trait CanCheckin
 {

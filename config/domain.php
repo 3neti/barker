@@ -74,4 +74,10 @@ return [
             'face_id_match_details' => env('HYPERVERGE_MAP_FACE_ID_MATCH_DETAILS','result.results.2.apiResponse.result.details'),
         ],
     ],
+    'dictionary' => [
+        'id_type' => [
+            'phl_dl' => 'Philippine Driver License',
+            'passport' => 'Passport'
+        ],
+    ],
 ];

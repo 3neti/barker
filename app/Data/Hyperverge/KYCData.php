@@ -3,10 +3,11 @@
 namespace App\Data\Hyperverge;
 
 use App\Pipes\Filters\AssociativeArray\{RemoveNulls, UpdateKeysFromSnakeToTitle, UpdateKeysToLowercase};
-use App\Enums\{HypervergeIDCard, HypervergeModule};
+use App\Pipes\Filters\Text\{LookupIdType, StudlyToTitle};
 use Spatie\LaravelData\Attributes\MapInputName;
-use App\Pipes\Filters\Text\StudlyToTitle;
+use JetBrains\PhpStorm\ArrayShape;
 use Illuminate\Pipeline\Pipeline;
+use App\Enums\HypervergeModule;
 use Spatie\LaravelData\Data;
 
 class KYCData extends Data
@@ -19,6 +20,7 @@ class KYCData extends Data
         public ApplicationData $application
     ) {}
 
+    #[ArrayShape(['idType' => "null|string", 'fieldsExtracted' => "array|null", 'idImageUrl' => "null|string", 'selfieImageUrl' => "null|string", 'idChecks' => "array|null", 'selfieChecks' => "array|null", 'by' => "mixed"])]
     public function with(): array
     {
         return [
@@ -44,8 +46,9 @@ class KYCData extends Data
     public function getIdType(): ?string
     {
         return app(Pipeline::class)
-            ->send($this->getDetails(HypervergeModule::ID_VERIFICATION)->idType->name)
+            ->send($this->getDetails(HypervergeModule::ID_VERIFICATION)->idType)
             ->through([
+                LookupIdType::class,
                 StudlyToTitle::class,
             ])
             ->thenReturn();
