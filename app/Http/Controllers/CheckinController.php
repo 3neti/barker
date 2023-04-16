@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Data\Hyperverge\KYCData;
 use App\Http\Requests\UpdateCheckinRequest;
 use App\Http\Requests\StoreCheckinRequest;
 use Laravel\Jetstream\RedirectsActions;
@@ -21,6 +22,9 @@ class CheckinController extends Controller
 
     public function index(Request $request): Response
     {
+        KYCData::$rawFieldsExtracted = false;
+        KYCData::$rawIdType = false;
+
         $campaign = tap($request->user()->currentCampaign, function ($campaign) {
             $campaign?->checkins->load(['person:id,mobile,handle']);
         });
@@ -56,10 +60,12 @@ class CheckinController extends Controller
      */
     public function show(Checkin $checkin): Response
     {
+        KYCData::$rawFieldsExtracted = false;
+
         return Inertia::render('Checkins/Show', [
             'checkin' => fn() => $checkin?->only('uuid', 'url', 'QRCodeURI', 'agent', 'campaign', 'data_retrieved_at'),
             'dataRetrieved' => $checkin?->dataRetrieved(),
-            'fieldsExtracted' => $checkin?->data?->getFieldsExtracted(),
+            'fieldsExtracted' => $checkin?->data?->getFieldsExtracted(raw: false),
             'idChecks' => $checkin?->data?->getIdChecks(),
             'selfieChecks' => $checkin?->data?->getSelfieChecks(),
             'idImageUrl' => $checkin?->data?->getIdImageUrl(),

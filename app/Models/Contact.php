@@ -30,4 +30,11 @@ class Contact extends Model
             get: fn () => Str::title($this->getAttribute('handle'))
         );
     }
+
+    public function setData(string $idType, array $fieldsExtracted): self
+    {
+        $this->data->set($idType, $fieldsExtracted);
+
+        return $this;
+    }
 }

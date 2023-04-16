@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Str;
 use Endroid\QrCode\{QrCode, Writer\PngWriter};
 use Illuminate\Support\Arr;
 
@@ -101,6 +102,19 @@ if (!function_exists('add_query_params')) {
 
         return unparse_url($parsed);
     }
-//    dental hub 85821900
+}
+
+if (!function_exists('surname_first_to_first_name_first')) {
+    /**
+     * @throws Throwable
+     */
+    function surname_first_to_first_name_first(string $fullName): string {
+        throw_if((!strpos($fullName, ',')), new Exception('No commas in fullName'));
+
+        $nameParts = array_reverse(explode(",", $fullName));
+        $nameParts = array_map(fn($namePart) => Str::of($namePart)->squish()->title()->value(), $nameParts);
+
+        return implode(' ', $nameParts);
+    }
 }
 
