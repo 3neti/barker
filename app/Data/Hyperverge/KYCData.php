@@ -6,11 +6,12 @@ use App\Pipes\Filters\AssociativeArray\{RemoveNulls, UpdateKeysFromSnakeToTitle,
 use App\Pipes\Filters\Text\{LookupIdType, StudlyToTitle};
 use Spatie\LaravelData\Attributes\MapInputName;
 use JetBrains\PhpStorm\ArrayShape;
+use Illuminate\Support\{Arr, Str};
 use Illuminate\Pipeline\Pipeline;
 use App\Enums\HypervergeModule;
 use App\Interfaces\Profileable;
 use Spatie\LaravelData\Data;
-use Illuminate\Support\Arr;
+
 use Throwable;
 
 class KYCData extends Data implements Profileable
@@ -63,10 +64,6 @@ class KYCData extends Data implements Profileable
             ->thenReturn();
     }
 
-//    public function setRawFieldsExtracted($raw = false)
-//    {
-//        $this->rawFieldsExtracted = $raw;
-//    }
     public function getIdImageUrl(): ?string
     {
         return $this->application
@@ -134,4 +131,13 @@ class KYCData extends Data implements Profileable
         };
     }
 
+    public function getAddress(): string
+    {
+        return Str::of(Arr::get($this->getFieldsExtracted(), 'address'))->title();
+    }
+
+    public function getBirthdate(): string
+    {
+       return Arr::get($this->getFieldsExtracted(), 'dateOfBirth');
+    }
 }

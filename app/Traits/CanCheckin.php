@@ -4,17 +4,13 @@ namespace App\Traits;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Support\Arr;
 use App\Models\Checkin;
 
 trait CanCheckin
 {
     public function initializeCanCheckin()
     {
-//        $this->append(['birthdate', 'address', 'reference']);
-//        $this->mergeCasts([
-//            'idType' => IDType::class
-//        ]);
+        $this->append(['birthdate', 'address', 'reference']);
     }
 
     public function getRouteKeyName(): string
@@ -27,35 +23,31 @@ trait CanCheckin
         return $this->belongsTo(Checkin::class);
     }
 
-    protected function getCheckinData(): array
-    {
-        return $this->checkin->getAttribute('data');
-    }
-
     protected function idType(): Attribute
     {
         return Attribute::make(
-            get: fn () => Arr::get($this->getCheckinData(), config('domain.hyperverge.mapping.id_type'))
+            get: fn () => $this->checkin->data->getIdType()
         );
     }
 
-    public function getBirthdateAttribute(): string
+    protected function birthdate(): Attribute
     {
-        return '21 April 9170';
+        return Attribute::make(
+            get: fn () => $this->checkin->data->getBirthdate()
+        );
     }
 
-    public function getAddressAttribute(): string
+    protected function address(): Attribute
     {
-        return 'Quezon City';
+        return Attribute::make(
+            get: fn () => $this->checkin->data->getAddress()
+        );
     }
 
-    public function getReferenceAttribute(): string
+    protected function reference(): Attribute
     {
-        return route('checkins.show', ['checkin' => $this->getAttribute('checkin_uuid')]);
-    }
-
-    public function getPayloadAttribute(): array
-    {
-        return Arr::only($this->toArray(), $this->getAppends());
+        return Attribute::make(
+            get: fn () => route('checkins.show', ['checkin' => $this->getAttribute('checkin_uuid')])
+        );
     }
 }
