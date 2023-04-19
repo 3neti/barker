@@ -26,21 +26,21 @@ trait CanCheckin
     protected function idType(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->checkin->data->getIdType()
+            get: fn () => $this->checkin->data?->getIdType()
         );
     }
 
     protected function birthdate(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->checkin->data->getBirthdate()
+            get: fn () => $this->checkin->data?->getBirthdate()
         );
     }
 
     protected function address(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->checkin->data->getAddress()
+            get: fn () => $this->checkin->data?->getAddress()
         );
     }
 

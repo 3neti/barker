@@ -5,6 +5,7 @@ import CreateCampaignForm from '@/Pages/Campaigns/Partials/CreateCampaignForm.vu
 const props = defineProps({
     test: String,
     availableTypes: Array,
+    availableMissives: Array,
 });
 
 </script>

@@ -7,6 +7,7 @@ import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import SectionBorder from '@/Components/SectionBorder.vue';
+import Checkbox from '@/Components/Checkbox.vue';
 
 const channels = ref([]);
 
@@ -16,6 +17,7 @@ const form = useForm({
     mobile: null,
     email: null,
     url: null,
+    missives: {otp: false, instruction: "", rider: ""},
 });
 
 const createCampaign = () => {
@@ -28,6 +30,15 @@ const createCampaign = () => {
 const availableTypes = computed(
     () => usePage().props.availableTypes,
 );
+
+const availableInstructions = computed(
+    () => usePage().props.availableMissives['instructions'],
+);
+
+const availableRiders = computed(
+    () => usePage().props.availableMissives['riders'],
+);
+
 </script>
 
 <template>
@@ -151,6 +162,90 @@ const availableTypes = computed(
                     />
                     <InputError :message="form.errors.url" class="mt-2" />
                 </template>
+
+                <SectionBorder />
+
+                <!-- Available Instructions -->
+                <InputLabel for="instructions" value="Instruction" />
+                <div class="relative z-0 mt-1 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer">
+                    <button
+                        v-for="(missive, i) in availableInstructions"
+                        :key="missive.key"
+                        type="button"
+                        class="relative px-4 py-3 inline-flex w-full rounded-lg focus:z-10 focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-600"
+                        :class="{'border-t border-gray-200 dark:border-gray-700 focus:border-none rounded-t-none': i > 0, 'rounded-b-none': i != Object.keys(availableInstructions).length - 1}"
+                        @click="form.missives.instruction = missive.text"
+                    >
+                        <div :class="{'opacity-50': form.missives.instruction && form.missives.instruction != missive.text}">
+                            <!-- Instruction Key -->
+                            <div class="flex items-center">
+                                <div class="text-sm text-gray-600 dark:text-gray-400" :class="{'font-semibold': form.missives.instruction == missive.text}">
+                                    {{ missive.key }}
+                                </div>
+
+                                <svg v-if="form.missives.instruction == missive.text" class="ml-2 h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <!-- Instruction Text -->
+                            <div class="mt-2 text-xs text-gray-600 dark:text-gray-400 text-left">
+                                {{ missive.text }}
+                            </div>
+                        </div>
+                    </button>
+                </div>
+                <TextInput
+                    id="instruction"
+                    v-model="form.missives.instruction"
+                    type="text"
+                    class="block w-full mt-1"
+                    autofocus
+                    placeholder="Send instruction here."
+                />
+
+                <!-- Available Riders -->
+                <InputLabel for="riders" value="Rider" />
+                <div class="relative z-0 mt-1 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer">
+                    <button
+                        v-for="(missive, i) in availableRiders"
+                        :key="missive.key"
+                        type="button"
+                        class="relative px-4 py-3 inline-flex w-full rounded-lg focus:z-10 focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-600"
+                        :class="{'border-t border-gray-200 dark:border-gray-700 focus:border-none rounded-t-none': i > 0, 'rounded-b-none': i != Object.keys(availableRiders).length - 1}"
+                        @click="form.missives.rider = missive.text"
+                    >
+                        <div :class="{'opacity-50': form.missives.rider && form.missives.rider != missive.text}">
+                            <!-- Instruction Key -->
+                            <div class="flex items-center">
+                                <div class="text-sm text-gray-600 dark:text-gray-400" :class="{'font-semibold': form.missives.rider == missive.text}">
+                                    {{ missive.key }}
+                                </div>
+
+                                <svg v-if="form.missives.rider == missive.text" class="ml-2 h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <!-- Instruction Text -->
+                            <div class="mt-2 text-xs text-gray-600 dark:text-gray-400 text-left">
+                                {{ missive.text }}
+                            </div>
+                        </div>
+                    </button>
+                </div>
+                <TextInput
+                    id="instructions"
+                    v-model="form.missives.rider"
+                    type="text"
+                    class="block w-full mt-1"
+                    autofocus
+                    placeholder="Send rider here."
+                />
+
+                <SectionBorder />
+
+                <!-- OTP -->
+                <InputLabel for="otp" value="Send OTP" />
+                <Checkbox id="otp" v-model="form.missives.otp" :checked="form.missives.otp"/>
             </div>
         </template>
 

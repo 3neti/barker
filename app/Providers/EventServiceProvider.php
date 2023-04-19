@@ -2,18 +2,18 @@
 
 namespace App\Providers;
 
-
 use App\Events\{CampaignAdded, CheckinAdded, Hyperverge\ResultProcessed, Hyperverge\ResultRetrieved, Hyperverge\URLGenerated};
 use App\Actions\Hyperverge\{GenerateURL,
     ProcessResult,
+    SendCampaignMissives,
     SendCampaignNotifications,
     SendCheckinNotification,
     UpdateCheckinUrl};
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use App\Observers\{CampaignObserver, CheckinObserver, TeamObserver, UserObserver};
+use App\Actions\{AddTeamCampaign, CreateCampaignItems, CreateCampaignMissives};
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Bavix\Wallet\Internal\Events\BalanceUpdatedEventInterface;
-use App\Actions\{AddTeamCampaign, CreateCampaignItems};
 use Junges\InviteCodes\Events\InviteRedeemedEvent;
 use App\Models\{Campaign, Checkin, Team, User};
 use App\Actions\Webhook\RemoveUserFromStandby;
@@ -50,13 +50,15 @@ class EventServiceProvider extends ServiceProvider
         ],
         CampaignAdded::class => [
             AddTeamCampaign::class,
-            CreateCampaignItems::class
+            CreateCampaignItems::class,
+            CreateCampaignMissives::class
         ],
         CheckinAdded::class => [
             GenerateURL::class
         ],
         URLGenerated::class => [
-            UpdateCheckinUrl::class
+            UpdateCheckinUrl::class,
+            SendCampaignMissives::class,
         ],
         ResultRetrieved::class => [
             ProcessResult::class

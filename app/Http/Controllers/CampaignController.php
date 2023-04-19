@@ -36,6 +36,7 @@ class CampaignController extends Controller
 
         return Jetstream::inertia()->render($request, 'Campaigns/Create', [
             'availableTypes' => array_values(Barker::$types),
+            'availableMissives' => Barker::$missives
         ]);
     }
 

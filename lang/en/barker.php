@@ -47,7 +47,38 @@ return [
             ],
         ],
     ],
+    'missive' => [
+        'content' => ":subject\r\n:body\r\n:signature",
+        'components' => [
+            'subject' => [
+                'otp' => 'OTP Header',
+                'instruction' => ':campaign',
+                'rider' => 'Rider Header'
+            ],
+            'body' => [
+                'otp' => "OTP Body",
+                'instruction' => 'Click the ff: :url',
+                'rider' => 'OTP Body'
+            ],
+            'signature' => [
+                'otp' => "OTP signature",
+                'instruction' => "- :app",
+                'rider' => "Rider signature",
+            ],
+        ],
+        'payload' => [
+            'otp' => 'otp: :otp',
+            'instruction' => ':reference',
+            'rider' => "name: :name\r\nreference: :reference"
+        ],
+    ],
     'notification' => [
+        'format' => [
+            'header' => ":subject",
+            'body' => "Fields extracted:\n\nname: :name,\nbirthdate: :birthdate,\naddress: :address",
+            'footer' => "- :from",
+            'sms' => ":header\r\n:body\r\n:footer",
+        ],
         'checkin' => [
             'campaign' => [
                 'sms' => ":subject\r\n:body",

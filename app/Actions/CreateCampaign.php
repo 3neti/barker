@@ -33,10 +33,13 @@ class CreateCampaign
         $campaign->team()->associate($team)->save();
         $team->switchCampaign($campaign);
         $owner->switchCampaign($campaign);
-        $type = Arr::get($input, 'type');
 
+        //get variables
+        $type = Arr::get($input, 'type');
         $channels = Arr::only($input, Barker::$channels);
-        CampaignAdded::dispatch($owner, $campaign, $type, $channels);
+        $missives = Arr::get($input, 'missives', []);
+
+        CampaignAdded::dispatch($owner, $campaign, $type, $channels, $missives);
 
         return $campaign;
     }
