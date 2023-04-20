@@ -59,7 +59,7 @@ class KYCData extends Data implements Profileable
             ->send($fieldsExtracted)
             ->through([
                 RemoveNulls::class,
-                UpdateKeysFromSnakeToTitle::class
+//                UpdateKeysFromSnakeToTitle::class
             ])
             ->thenReturn();
     }
