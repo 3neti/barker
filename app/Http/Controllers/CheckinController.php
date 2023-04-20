@@ -26,7 +26,7 @@ class CheckinController extends Controller
         KYCData::$rawIdType = false;
 
         $campaign = tap($request->user()->currentCampaign, function ($campaign) {
-            $campaign?->checkins->load(['person:id,mobile,handle']);
+            $campaign?->checkins->load(['person:id,mobile,handle,checkin_uuid']);
         });
         $type = $campaign?->teams->where('id', $request->user()->currentTeam->id)->first()->enlistment->type ?? '';
         $channels = $campaign?->campaignItems->pluck('channel')->all();
