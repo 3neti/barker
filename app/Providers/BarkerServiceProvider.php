@@ -21,19 +21,17 @@ class BarkerServiceProvider extends ServiceProvider
     protected function configureChannels(): void
     {
         Barker::type('accounting', 'Accounting', [
-            'mobile',
             'email'
         ])->description('Accounting description');
 
         Barker::type('authentication', 'Authentication', [
-            'mobile',
             'email',
-            'webhook'
+            'mobile',
         ])->description('Authentication description');
 
         Barker::type('authorization', 'Authorization', [
-            'mobile',
             'email',
+            'mobile',
             'webhook'
         ])->description('Authorization description');
     }
