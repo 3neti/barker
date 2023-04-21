@@ -8,7 +8,6 @@ use App\Events\{AddingCheckin, CheckinAdded};
 use Lorisleiva\Actions\Concerns\AsAction;
 use App\Models\{Checkin, Contact, User};
 use Illuminate\Database\QueryException;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Arr;
 
 class CreateCheckin
@@ -30,34 +29,27 @@ class CreateCheckin
         });
         Validator::make($input, $this->rules($input))->validateWithBag('createCheckin');
         AddingCheckin::dispatch($agent);
-        $checkin = null;
-        DB::beginTransaction();
-        try {
-            $checkin = tap(app(Checkin::class)->make($input), function ($checkin) use ($agent, $input) {
-                $checkin->setAgent($agent)->setCampaign($agent->currentCampaign)->save();
-                $agent->switchCheckin($checkin);
-                try {
-                    $attributes = Arr::only($input, ['mobile', 'handle']);
-                    $contact = $checkin->contact()->create($attributes);
+
+        $checkin = tap(app(Checkin::class)->make($input), function ($checkin) use ($agent, $input) {
+            $checkin->setAgent($agent)->setCampaign($agent->currentCampaign)->save();
+            $agent->switchCheckin($checkin);
+            try {
+                $attributes = Arr::only($input, ['mobile', 'handle']);
+                $contact = $checkin->contact()->create($attributes);
+            }
+            catch (QueryException $exception) {
+                $error_code = $exception->errorInfo[1];
+                if ($error_code == 1062){
+                    $contact = Contact::fromMobile(Arr::get($input, 'mobile'));
+                    $contact->checkin_uuid = $checkin->uuid;//TODO: create a contact_checkin table
+                    $contact->save();
                 }
-                catch (QueryException $exception) {
-                    $error_code = $exception->errorInfo[1];
-                    if ($error_code == 1062){
-                        $contact = Contact::fromMobile(Arr::get($input, 'mobile'));
-                        $contact->checkin_uuid = $checkin->uuid;//TODO: create a contact_checkin table
-                        $contact->save();
-                    }
-                }
-                $checkin->setPerson($contact);
-                $checkin->save();
-            });
-            DB::commit();
-        }
-        catch (\Exception $exception) {
-            DB::rollBack();
-        } finally {
-            $checkin && CheckinAdded::dispatch($checkin);
-        }
+            }
+            $checkin->setPerson($contact);
+            $checkin->save();
+        });
+
+        CheckinAdded::dispatch($checkin);
 
         return $checkin;
     }

@@ -132,22 +132,10 @@ class Checkin extends Model
 
     public function getQRCodeURIAttribute(): ?string
     {
-        $long_url = $this->getAttribute('url');
-        if (config('domain.shorten_url')) {
-            if (Cache::has($key = 'short_url-' . $long_url)) {
-                $short_url = Cache::get($key);
-            }
-            else {
-                Cache::forever($key, $short_url = app('bitly')->getUrl($long_url));
-            }
-            $url = $short_url;
-        }
-        else {
-            $url = $long_url;
-        }
+        $uuid = $this->getAttribute('uuid');
+        $url = $this->getAttribute('url');
 
-
-        if (Cache::has($key = 'qrcode_uri-' . $url)) {
+        if (Cache::has($key = 'qrcode_uri-' . $uuid)) {
             $qrCodeURI = Cache::get($key);
         }
         else {
