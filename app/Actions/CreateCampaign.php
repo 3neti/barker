@@ -10,20 +10,21 @@ use Illuminate\Support\Arr;
 use App\Classes\Barker;
 use App\Rules\Type;
 
+use Illuminate\Validation\Rule;
+
 class CreateCampaign
 {
     use AsAction;
 
+
     /**
-     * Validate and create a team campaign for the given user.
-     *
-     * @param array<string, string> $input
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function handle(User $owner, array $input): Campaign
     {
 //        Gate::forUser($user)->authorize('create', Jetstream::newCampaignModel());
-        Validator::make($input, $this->rules())->validateWithBag('createCampaign');
+        Validator::make($input, $this->rules($input))->validateWithBag('createCampaign');
 
         AddingCampaign::dispatch($owner);
 
@@ -49,10 +50,12 @@ class CreateCampaign
         $this->handle($owner, $input);
     }
 
-    protected function rules(): array
+    protected function rules(array $input): array
     {
+        //TODO: add webhook validation
         return array_filter([
-            'email' => ['nullable', 'email'],
+            'email' => ['email', Rule::requiredIf(!Arr::exists($input, 'mobile'))],
+            'mobile' => [Rule::requiredIf(!Arr::exists($input, 'email'))],
             'type' => Barker::hasTypes()
                 ? ['required', 'string', new Type]
                 : null,

@@ -9,8 +9,10 @@ use MatanYadaev\EloquentSpatial\Traits\HasSpatial;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use MatanYadaev\EloquentSpatial\Objects\Point;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 use App\Data\Hyperverge\KYCData;
 use Illuminate\Support\Arr;
+
 
 class Checkin extends Model
 {
@@ -130,9 +132,29 @@ class Checkin extends Model
 
     public function getQRCodeURIAttribute(): ?string
     {
-        $url = $this->getAttribute('url');
+        $long_url = $this->getAttribute('url');
+        if (config('domain.shorten_url')) {
+            if (Cache::has($key = 'short_url-' . $long_url)) {
+                $short_url = Cache::get($key);
+            }
+            else {
+                Cache::forever($key, $short_url = app('bitly')->getUrl($long_url));
+            }
+            $url = $short_url;
+        }
+        else {
+            $url = $long_url;
+        }
 
-        return generateQRCodeURI($url);
+
+        if (Cache::has($key = 'qrcode_uri-' . $url)) {
+            $qrCodeURI = Cache::get($key);
+        }
+        else {
+            Cache::forever($key, $qrCodeURI = generateQRCodeURI($url));
+        }
+
+        return $qrCodeURI;
     }
 
     public function getWorkflowIdAttribute()

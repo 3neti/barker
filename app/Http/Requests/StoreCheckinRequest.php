@@ -24,7 +24,7 @@ class StoreCheckinRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'mobile' => ['nullable', (new PhoneRule)->mobile()->country('PH')],
+            'mobile' => ['nullable', (new PhoneRule)->mobile()->country('PH', 'US', 'IN')],
             'handle' => ['nullable', 'string', 'max:100'],
         ];
     }
@@ -37,7 +37,7 @@ class StoreCheckinRequest extends FormRequest
         $data = parent::validationData();
 
         return array_merge($data, [
-            'mobile' => Phone::number($data['mobile']),
+            'mobile' => $data['mobile'] ? Phone::number($data['mobile']) : null,
         ]);
     }
 }

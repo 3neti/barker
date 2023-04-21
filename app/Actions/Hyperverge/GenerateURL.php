@@ -37,8 +37,9 @@ class GenerateURL
 
     protected function getURL($response): string
     {
-        $url = $response->json('result.startKycUrl');
-
-        return app('bitly')->getUrl($url);
+        return $response->json('result.startKycUrl');
+//        $url = $response->json('result.startKycUrl');
+//
+//        return app('bitly')->getUrl($url);
     }
 }

@@ -80,4 +80,5 @@ return [
             'passport' => 'Passport'
         ],
     ],
+    'shorten_url' => env('DOMAIN_SHORTEN_URL', false)
 ];

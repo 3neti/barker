@@ -37,7 +37,7 @@ trait HasMobile
     protected function mobile(): Attribute
     {
         return Attribute::make(
-            get: fn (string $value) => Phone::number($value, PhoneNumberFormat::INTERNATIONAL),
+            get: fn (?string $value) => $value ? Phone::number($value, PhoneNumberFormat::INTERNATIONAL) : null,
             set: fn (string $value) => Phone::number($value, PhoneNumberFormat::E164),
         );
     }
