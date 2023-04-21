@@ -15,7 +15,7 @@ const form = useForm({
     name: '',
     type: null,
     mobile: null,
-    email: null,
+    email: usePage().props.auth.user.email,
     url: null,
     missives: {otp: false, instruction: "", rider: ""},
 });
