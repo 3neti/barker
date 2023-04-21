@@ -44,7 +44,7 @@ class StoreCampaignRequest extends FormRequest
         $data = parent::validationData();
 
         return array_merge($data, [
-            'mobile' => Phone::number($data['mobile']),
+            'mobile' => $data['mobile'] ? Phone::number($data['mobile']) : null,
         ]);
     }
 }

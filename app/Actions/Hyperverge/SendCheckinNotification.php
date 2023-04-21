@@ -19,8 +19,13 @@ class SendCheckinNotification
         $checkin->person->notify(new CheckinNotification($checkin));
     }
 
+    public function asJob(Checkin $checkin)
+    {
+        $this->handle($checkin);
+    }
+
     public function asListener(ResultProcessed $event)
     {
-        $this->handle($event->checkin);
+        self::dispatch($event->checkin);
     }
 }

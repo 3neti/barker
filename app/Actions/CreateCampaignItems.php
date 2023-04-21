@@ -14,6 +14,7 @@ class CreateCampaignItems
     {
         $count = 0;
         foreach ($channels as $channel => $value) {
+            if (empty($value)) continue;
             $subject = trans('barker.checkin.header')[$type][$channel];
             $template = trans('barker.checkin.body')[$type][$channel];
             $uri = match ($channel) {

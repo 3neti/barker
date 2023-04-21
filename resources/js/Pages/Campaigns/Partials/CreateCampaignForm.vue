@@ -241,14 +241,13 @@ const availableRiders = computed(
                         autofocus
                         placeholder="Send rider here."
                     />
+
+                    <SectionBorder />
+
+                    <!-- OTP -->
+                    <InputLabel for="otp" value="Send OTP" />
+                    <Checkbox id="otp" v-model="form.missives.otp" :checked="form.missives.otp"/>
                 </template>
-
-
-                <SectionBorder />
-
-                <!-- OTP -->
-                <InputLabel for="otp" value="Send OTP" />
-                <Checkbox id="otp" v-model="form.missives.otp" :checked="form.missives.otp"/>
             </div>
         </template>
 

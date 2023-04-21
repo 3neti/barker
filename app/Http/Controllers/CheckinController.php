@@ -49,7 +49,8 @@ class CheckinController extends Controller
     {
         $action = app(CreateCheckin::class);
         $agent = $request->user();
-        $action->dispatch($agent, $request->all());
+//        $action->dispatch($agent, $request->all());
+        $action->run($agent, $request->all());
 
         return to_route('checkins.show', ['checkin' => $agent->fresh()->current_checkin_uuid]);
 //        return $this->redirectPath($action);

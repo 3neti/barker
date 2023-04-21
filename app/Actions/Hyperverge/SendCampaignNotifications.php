@@ -24,8 +24,13 @@ class SendCampaignNotifications
         }
     }
 
+    public function asJob(Checkin $checkin)
+    {
+        $this->handle($checkin);
+    }
+
     public function asListener(ResultProcessed $event)
     {
-        $this->handle($event->checkin);
+        self::dispatch($event->checkin);
     }
 }

@@ -19,7 +19,7 @@ class GenerateURL
         $response = Http::withHeaders($this->hyperverge->headers())->post($this->hyperverge->endpoint(), $body);
         $url = null;
         if ($response->successful()) {
-            URLGenerated::dispatch($transactionId, $url = $this->getURL($response));
+            URLGenerated::dispatch($transactionId, $url = $response->json('result.startKycUrl'));
         }
 
         return $url;
@@ -32,14 +32,6 @@ class GenerateURL
 
     public function asListener(CheckinAdded $event)
     {
-        $this->handle($event->checkin->uuid);
-    }
-
-    protected function getURL($response): string
-    {
-        return $response->json('result.startKycUrl');
-//        $url = $response->json('result.startKycUrl');
-//
-//        return app('bitly')->getUrl($url);
+        self::dispatch($event->checkin->uuid);
     }
 }

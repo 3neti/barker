@@ -33,6 +33,6 @@ class ProcessResult
 
     public function asListener(ResultRetrieved $event)
     {
-        $this->handle($event->checkin);
+        self::dispatch($event->checkin);
     }
 }
