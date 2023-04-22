@@ -70,15 +70,14 @@ class RetrieveResult
      */
     public function asController(ActionRequest $request): RedirectResponse
     {
-        $status = Arr::get($request->all(), 'status');
+        list($transactionId, $status) = array_values(Arr::only($request->all(), ['transactionId', 'status']));
 
         if ($status == 'auto_approved') {
-            $uuid = Arr::get($request->all(), 'transactionId');
-            $checkin = Checkin::find($uuid);
-            self::dispatch($checkin);
-            return redirect()->route('contacts.show', ['contact' => $uuid]);
+            self::dispatch(Checkin::find($transactionId));
+
+            return redirect()->route('contacts.show', ['contact' => $transactionId]);
         } else {
-            throw new NotAutoApproved('');
+            throw new NotAutoApproved($transactionId, $status);
         }
     }
 

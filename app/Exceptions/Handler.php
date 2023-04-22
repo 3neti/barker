@@ -3,7 +3,10 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use App\Events\Hyperverge\TransactionDisapproved;
+use App\Exceptions\NotAutoApproved;
 use Throwable;
+use Inertia\Inertia;
 
 class Handler extends ExceptionHandler
 {
@@ -41,8 +44,18 @@ class Handler extends ExceptionHandler
      */
     public function register(): void
     {
-        $this->reportable(function (Throwable $e) {
-            //
+        $this->renderable(function (NotAutoApproved $e, $request) {
+            if ($request->is('api/*')) {
+
+            }
+            else {
+                TransactionDisapproved::dispatch($e->transactionId, $e->status);
+
+                return Inertia::render('Checkins/NotApproved', [
+                    'transactionId' => $e->transactionId,
+                    'status' => $e->status,
+                ]);
+            }
         });
     }
 }

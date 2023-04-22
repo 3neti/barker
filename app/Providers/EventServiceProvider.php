@@ -2,7 +2,12 @@
 
 namespace App\Providers;
 
-use App\Events\{CampaignAdded, CheckinAdded, Hyperverge\ResultProcessed, Hyperverge\ResultRetrieved, Hyperverge\URLGenerated};
+use App\Events\{CampaignAdded,
+    CheckinAdded,
+    Hyperverge\ResultProcessed,
+    Hyperverge\ResultRetrieved,
+    Hyperverge\TransactionDisapproved,
+    Hyperverge\URLGenerated};
 use App\Actions\Hyperverge\{GenerateURL,
     ProcessResult,
     SendCampaignMissives,
@@ -66,6 +71,9 @@ class EventServiceProvider extends ServiceProvider
         ResultProcessed::class => [
             SendCampaignNotifications::class,
             SendCheckinNotification::class,
+        ],
+        TransactionDisapproved::class => [
+
         ],
     ];
 
