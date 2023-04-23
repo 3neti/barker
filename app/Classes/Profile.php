@@ -4,25 +4,25 @@ namespace App\Classes;
 
 use JsonSerializable;
 
-//deprecate
-class Instruction implements JsonSerializable
+//TODO: create a parent to inherit or a trait (with Type, Missive, Profile etc.) e.g. KeyVal
+class Profile implements JsonSerializable
 {
     /**
-     * The key identifier for the instruction.
+     * The key identifier for the profile.
      *
      * @var string
      */
     public $key;
 
     /**
-     * The text of the instruction.
+     * The choices of the profile.
      *
-     * @var string
+     * @var array
      */
-    public $text;
+    public $options;
 
     /**
-     * The instruction's description.
+     * The profile's description.
      *
      * @var string
      */
@@ -32,13 +32,13 @@ class Instruction implements JsonSerializable
      * Create a new instruction instance.
      *
      * @param  string  $key
-     * @param  string  $text
+     * @param  array  $options
      * @return void
      */
-    public function __construct(string $key, string $text)
+    public function __construct(string $key, array $options)
     {
         $this->key = $key;
-        $this->text = $text;
+        $this->options = $options;
     }
 
     /**
@@ -64,7 +64,7 @@ class Instruction implements JsonSerializable
     {
         return [
             'key' => $this->key,
-            'text' => __($this->text),
+            'options' => $this->options,//TODO: see if json serialize
             'description' => __($this->description),
         ];
     }

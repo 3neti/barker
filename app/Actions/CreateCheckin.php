@@ -31,7 +31,9 @@ class CreateCheckin
         AddingCheckin::dispatch($agent);
 
         $checkin = tap(app(Checkin::class)->make($input), function ($checkin) use ($agent, $input) {
-            $checkin->setAgent($agent)->setCampaign($agent->currentCampaign)->save();
+            $checkin->setAgent($agent);
+            $checkin->setCampaign($agent->currentCampaign);
+            $checkin->save();
             $agent->switchCheckin($checkin);
             try {
                 $attributes = Arr::only($input, ['mobile', 'handle']);

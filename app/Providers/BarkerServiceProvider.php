@@ -16,6 +16,8 @@ class BarkerServiceProvider extends ServiceProvider
         $this->addInstructions();
 
         $this->addRiders();
+
+        $this->addProfiles();
     }
 
     protected function configureChannels(): void
@@ -65,5 +67,17 @@ class BarkerServiceProvider extends ServiceProvider
         Barker::rider('Third Rider', 'Sagittis nisl rhoncus mattis rhoncus urna neque viverra.')
             ->timing('post-checkin')
             ->description('3rd rider');
+    }
+
+    protected function addProfiles()
+    {
+        Barker::profile('Gender', ['Male', 'Female'])
+            ->description('Gender description');
+        Barker::profile('Age', ['Young', 'Middle-Aged', 'Old'])
+            ->description('Age description');
+        Barker::profile('Complexion', ['Dark-Skinned', 'Brown-Skinned', 'Fair-Skinned'])
+            ->description('Complexion description');
+        Barker::profile('Height', ['Short', 'Average Height', 'Tall'])
+            ->description('Height description');
     }
 }

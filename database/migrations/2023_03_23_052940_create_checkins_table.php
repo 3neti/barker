@@ -19,6 +19,7 @@ return new class extends Migration
             $table->point('location')->nullable();
             $table->string('url', 2048)->nullable();
             $table->json('data')->nullable();
+            $table->json('profile')->nullable();
             $table->foreign('agent_id')->references('id')->on('users');
             $table->timestamp('data_retrieved_at')->nullable();
             $table->timestamps();

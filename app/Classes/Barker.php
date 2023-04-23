@@ -13,6 +13,8 @@ class Barker
         'riders' => [],
     ];
 
+    public static array $profiles = [];
+
     public static function type(string $key, string $name, array $channels): Type
     {
         static::$channels = collect(array_merge(static::$channels, $channels))
@@ -53,5 +55,17 @@ class Barker
     public function hasRiders(): bool
     {
         return count(static::$missives['riders']) > 0;
+    }
+
+    public static function hasProfiles(): bool
+    {
+        return count(static::$profiles) > 0;
+    }
+
+    public static function profile(string $key, array $options): Profile
+    {
+        return tap(new Profile($key, $options), function ($profile) use ($key) {
+            static::$profiles[$key] = $profile;
+        });
     }
 }

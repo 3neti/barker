@@ -20,7 +20,7 @@ class Checkin extends Model
 
     protected $primaryKey = 'uuid';
 
-    protected $fillable = ['url', 'uri', 'data', 'location'];
+    protected $fillable = ['url', 'uri', 'data', 'location', 'profile'];
 
     protected $appends = ['QRCodeURI', 'data'];
 
@@ -109,6 +109,13 @@ class Checkin extends Model
         return $this;
     }
 
+    public function setProfile($profile): self
+    {
+        $this->setAttribute('profile', $profile);
+
+        return $this;
+    }
+
     /** computed */
 
     public function dataRetrieved(): bool
@@ -127,6 +134,14 @@ class Checkin extends Model
                 ? KYCData::from((array) json_decode($value, true))
                 : null,
             set: fn ($value) => json_encode($value),
+        );
+    }
+
+    protected function profile(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => json_decode($value, true),
+            set: fn ($value) => json_encode($value)
         );
     }
 
