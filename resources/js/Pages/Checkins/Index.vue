@@ -64,7 +64,7 @@ Echo.private(`wallet.holder.${usePage().props.auth.user.id}`)
                                 <div class="flex items-center gap-x-3">
                                     <h2 class="text-lg font-medium text-gray-800 dark:text-white">{{ type }} requests</h2>
 
-                                    <span class="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400">{{ usePage().props.campaign?.checkins.length }} record<template v-show="usePage().props.campaign?.checkins.length !== 1">s</template></span>
+                                    <span class="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400">{{ usePage().props.campaign?.checkins.length }} record<span v-show="usePage().props.campaign?.checkins.length !== 1">s</span></span>
                                 </div>
 
                                 <p class="mt-1 text-sm text-gray-500 dark:text-gray-300">{{ usePage().props.channels }}</p>
