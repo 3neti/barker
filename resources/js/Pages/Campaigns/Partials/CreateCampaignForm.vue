@@ -107,7 +107,11 @@ const checkProfile = (key) => {
                 />
                 <InputError :message="form.errors.name" class="mt-2" />
 
-                <!-- Template Instructions -->
+
+
+            </div>
+            <!-- Template Instructions -->
+            <div class="col-span-6 sm:col-span-4">
                 <InputLabel for="instructions" value="Instruction Templates" />
                 <div class="relative z-0 mt-1 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer">
                     <button
@@ -145,9 +149,9 @@ const checkProfile = (key) => {
                     autofocus
                     placeholder="input instructions here..."
                 />
-
-                <!-- Profiles -->
-                <SectionBorder />
+            </div>
+            <!-- Profiles -->
+            <div class="col-span-6 sm:col-span-4">
                 <InputLabel value="Profiles" />
                 <div class="relative z-0 mt-1 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer">
                     <ul>
@@ -165,73 +169,68 @@ const checkProfile = (key) => {
                         </template>
                     </ul>
                 </div>
+            </div>
+            <!-- Missives -->
+            <!-- Riders -->
+            <div class="col-span-6 sm:col-span-4" v-show="showRiders">
+                <InputLabel for="riders" value="SMS Rider" />
+                <div class="relative z-0 mt-1 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer">
+                    <button
+                        v-for="(missive, , index) in availableRiders"
+                        :key="missive.key"
+                        type="button"
+                        class="relative px-4 py-3 inline-flex w-full rounded-lg focus:z-10 focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-600"
+                        :class="{'border-t border-gray-200 dark:border-gray-700 focus:border-none rounded-t-none': index > 0, 'rounded-b-none': index != Object.keys(availableRiders).length - 1}"
+                        @click="form.missives.rider = missive.text"
+                    >
 
-                <!-- Missives -->
-                <SectionBorder />
-                <!-- Riders -->
-                <div v-show="showRiders">
-                    <InputLabel for="riders" value="SMS Rider" />
-                    <div class="relative z-0 mt-1 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer">
-                        <button
-                            v-for="(missive, , index) in availableRiders"
-                            :key="missive.key"
-                            type="button"
-                            class="relative px-4 py-3 inline-flex w-full rounded-lg focus:z-10 focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-600"
-                            :class="{'border-t border-gray-200 dark:border-gray-700 focus:border-none rounded-t-none': index > 0, 'rounded-b-none': index != Object.keys(availableRiders).length - 1}"
-                            @click="form.missives.rider = missive.text"
-                        >
-
-                            <div :class="{'opacity-50': form.missives.rider && form.missives.rider != missive.text}">
-                                <!-- Rider Key -->
-                                <div class="flex items-center">
-                                    <div class="text-sm text-gray-600 dark:text-gray-400" :class="{'font-semibold': form.missives.rider == missive.text}">
-                                        {{ missive.key }}
-                                    </div>
-
-                                    <svg v-if="form.missives.rider == missive.text" class="ml-2 h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
+                        <div :class="{'opacity-50': form.missives.rider && form.missives.rider != missive.text}">
+                            <!-- Rider Key -->
+                            <div class="flex items-center">
+                                <div class="text-sm text-gray-600 dark:text-gray-400" :class="{'font-semibold': form.missives.rider == missive.text}">
+                                    {{ missive.key }}
                                 </div>
 
-                                <!-- Rider Description -->
-                                <div class="mt-2 text-xs text-gray-600 dark:text-gray-400 text-left">
-                                    {{ missive.description }}
-                                </div>
-
-                                <!-- Rider Text -->
-                                <div class="mt-2 text-xs text-gray-600 dark:text-gray-400 text-left">
-                                    <i>
-                                        "{{ missive.text }}"
-                                    </i>
-                                </div>
+                                <svg v-if="form.missives.rider == missive.text" class="ml-2 h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
                             </div>
-                        </button>
-                    </div>
-                    <textarea
-                        id="instructions"
-                        type="text"
-                        v-model="form.missives.rider"
-                        rows="3"
-                        class="block w-full mt-1 border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
-                        autofocus
-                        placeholder="input sms rider here..."
-                    />
-                </div>
-                <SectionBorder />
-                <!-- OTP -->
-                <div v-show="showOTP">
 
+                            <!-- Rider Description -->
+                            <div class="mt-2 text-xs text-gray-600 dark:text-gray-400 text-left">
+                                {{ missive.description }}
+                            </div>
 
-                    <div class="flex items-start mb-6">
-                        <div class="flex items-center h-5">
-                            <Checkbox id="otp" v-model="form.missives.otp" :checked="form.missives.otp" class="w-4 h-4"/>
+                            <!-- Rider Text -->
+                            <div class="mt-2 text-xs text-gray-600 dark:text-gray-400 text-left">
+                                <i>
+                                    "{{ missive.text }}"
+                                </i>
+                            </div>
                         </div>
-                        <InputLabel for="otp" value="Send OTP" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"/>
-                    </div>
+                    </button>
                 </div>
-
-                <!-- Data Usage | Campaign Type -->
-                <SectionBorder />
+                <textarea
+                    id="instructions"
+                    type="text"
+                    v-model="form.missives.rider"
+                    rows="3"
+                    class="block w-full mt-1 border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                    autofocus
+                    placeholder="input sms rider here..."
+                />
+            </div>
+            <!-- OTP -->
+            <div class="col-span-6 sm:col-span-4" v-show="showOTP">
+                <div class="flex items-start mb-6">
+                    <div class="flex items-center h-5">
+                        <Checkbox id="otp" v-model="form.missives.otp" :checked="form.missives.otp" class="w-4 h-4"/>
+                    </div>
+                    <InputLabel for="otp" value="Send OTP" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"/>
+                </div>
+            </div>
+            <!-- Data Usage | Campaign Type -->
+            <div class="col-span-6 sm:col-span-4">
                 <InputLabel for="type" value="Data Usage" />
                 <div class="relative z-0 mt-1 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer">
                     <button
@@ -267,7 +266,10 @@ const checkProfile = (key) => {
                     </button>
                 </div>
                 <InputError :message="form.errors.type" class="mt-2" />
-                <!-- Email Channel -->
+            </div>
+            <!-- Channels -->
+            <div class="col-span-6 sm:col-span-4">
+                <!-- Email -->
                 <div v-show="channels?.includes('email')">
                     <div class="flex">
                         <span class="inline-flex items-center px-3 text-sm block font-medium text-sm text-gray-700 dark:text-gray-300">........email</span>
@@ -283,7 +285,7 @@ const checkProfile = (key) => {
                         <InputError :message="form.errors.email" class="mt-2" />
                     </div>
                 </div>
-                <!-- Mobile Channel -->
+                <!-- Mobile -->
                 <div v-show="channels?.includes('mobile')">
                     <div class="flex">
                         <span class="inline-flex items-center px-3 text-sm block font-medium text-sm text-gray-700 dark:text-gray-300">.....mobile</span>
@@ -299,7 +301,7 @@ const checkProfile = (key) => {
                         <InputError :message="form.errors.mobile" class="mt-2" />
                     </div>
                 </div>
-                <!-- Webhook Channel -->
+                <!-- Webhook -->
                 <div v-show="channels?.includes('webhook')">
                     <div class="flex">
                         <span class="inline-flex items-center px-3 text-sm block font-medium text-sm text-gray-700 dark:text-gray-300">webhook</span>

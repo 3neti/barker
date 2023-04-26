@@ -106,9 +106,9 @@ class BarkerServiceProvider extends ServiceProvider
             ->description('Gender description');
         Barker::profile('Age', ['Young', 'Middle-Aged', 'Old'])
             ->description('Age description');
-        Barker::profile('Complexion', ['Dark-Skinned', 'Brown-Skinned', 'Fair-Skinned'])
+        Barker::profile('Complexion', ['Dark', 'Fair', 'White'])
             ->description('Complexion description');
-        Barker::profile('Height', ['Short', 'Average Height', 'Tall'])
+        Barker::profile('Height', ['Short', 'Average', 'Tall'])
             ->description('Height description');
     }
 }

@@ -17,6 +17,7 @@ return [
         'teams' => [
             'general' => [
                 'name' => env('DOMAIN_DEFAULT_TEAM_NAME',  'General Membership'),
+                'alias' => env('DOMAIN_DEFAULT_TEAM_ALIAS',  'Gen Mem'),
                 'personal_team' =>  false,
             ],
             'standby' => [
