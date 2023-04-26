@@ -2,22 +2,22 @@
 
 namespace App\Models;
 
-
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Jetstream\Team as JetstreamTeam;
 use Laravel\Jetstream\Events\TeamCreated;
 use Laravel\Jetstream\Events\TeamDeleted;
 use Laravel\Jetstream\Events\TeamUpdated;
-use App\Models\Scopes\Switchable;
-use Laravel\Jetstream\Jetstream;
 use Illuminate\Database\Eloquent\Builder;
-use App\Traits\HasCampaigns;
+use App\Traits\{HasAlias, HasCampaigns};
+use App\Models\Scopes\Switchable;
+//use Laravel\Jetstream\Jetstream;
 
 class Team extends JetstreamTeam
 {
-    use HasFactory;
     use HasCampaigns;
+    use HasFactory;
+    use HasAlias;
 
     /**
      * The attributes that should be cast.

@@ -4,8 +4,8 @@ import CreateCheckinForm from '@/Pages/Checkins/Partials/CreateCheckinForm.vue';
 
 const props = defineProps({
     campaign: Object,
-    type: String,
-    availableProfiles: Array
+    type: Object,
+    availableProfiles: Object
 });
 
 </script>

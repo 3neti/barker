@@ -32,13 +32,15 @@ class TeamSeeder extends Seeder
         });
     }
 
-    #[ArrayShape(['name' => "mixed", 'email' => "mixed", 'password' => "string"])] protected function adminAttributes(): array
+    #[ArrayShape(['name' => "string", 'email' => "string", 'mobile' => "string",'password' => "string"])]
+    protected function adminAttributes(): array
     {
         $attribs = config('domain.seeds.user.system');
 
         return [
             'name' => $attribs['name'],
             'email' => $attribs['email'],
+            'mobile' => $attribs['mobile'],
             'password' => Hash::make($attribs['password']),
         ];
     }

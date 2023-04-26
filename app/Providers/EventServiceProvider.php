@@ -14,9 +14,9 @@ use App\Actions\Hyperverge\{GenerateURL,
     SendCampaignNotifications,
     SendCheckinNotification,
     UpdateCheckinUrl};
+use App\Actions\{AddTeamCampaign, CreateCampaignItems, CreateCampaignMissives, CreateCampaignProfiles};
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use App\Observers\{CampaignObserver, CheckinObserver, TeamObserver, UserObserver};
-use App\Actions\{AddTeamCampaign, CreateCampaignItems, CreateCampaignMissives};
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Bavix\Wallet\Internal\Events\BalanceUpdatedEventInterface;
 use Junges\InviteCodes\Events\InviteRedeemedEvent;
@@ -56,7 +56,8 @@ class EventServiceProvider extends ServiceProvider
         CampaignAdded::class => [
             AddTeamCampaign::class,
             CreateCampaignItems::class,
-            CreateCampaignMissives::class
+            CreateCampaignMissives::class,
+            CreateCampaignProfiles::class,
         ],
         CheckinAdded::class => [
             GenerateURL::class

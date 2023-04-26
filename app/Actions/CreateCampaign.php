@@ -39,8 +39,9 @@ class CreateCampaign
         $type = Arr::get($input, 'type');
         $channels = Arr::only($input, Barker::$channels);
         $missives = Arr::get($input, 'missives', []);
+        $profiles = Arr::get($input, 'profiles', []);
 
-        CampaignAdded::dispatch($owner, $campaign, $type, $channels, $missives);
+        CampaignAdded::dispatch($owner, $campaign, $type, $channels, $missives, $profiles);
 
         return $campaign;
     }

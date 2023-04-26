@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use JetBrains\PhpStorm\ArrayShape;
 use Illuminate\Support\Arr;
 
+//TODO: rename this to CampaignChannel
 class CampaignItem extends Model
 {
     use HasFactory;

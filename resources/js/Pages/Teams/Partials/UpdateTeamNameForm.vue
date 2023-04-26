@@ -14,6 +14,7 @@ const props = defineProps({
 
 const form = useForm({
     name: props.team.name,
+    alias: props.team.alias,
 });
 
 const updateTeamName = () => {
@@ -64,6 +65,21 @@ const updateTeamName = () => {
                 />
 
                 <InputError :message="form.errors.name" class="mt-2" />
+            </div>
+
+            <!-- Team Alias -->
+            <div class="col-span-6 sm:col-span-4">
+                <InputLabel for="alias" value="Team Alias" />
+
+                <TextInput
+                    id="name"
+                    v-model="form.alias"
+                    type="text"
+                    class="mt-1 block w-full"
+                    :disabled="! permissions.canUpdateTeam"
+                />
+
+                <InputError :message="form.errors.alias" class="mt-2" />
             </div>
         </template>
 

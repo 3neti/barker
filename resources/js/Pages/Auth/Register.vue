@@ -22,6 +22,7 @@ function getNameFromEmail(email) {
 const form = useForm({
     name: getNameFromEmail(params.get('email')),
     email: params.get('email'),
+    mobile: null,
     password: params.get('invite_code'),
     password_confirmation: params.get('invite_code'),
     terms: false,
@@ -71,6 +72,18 @@ const submit = () => {
                     autocomplete="username"
                 />
                 <InputError class="mt-2" :message="form.errors.email" />
+            </div>
+
+            <div class="mt-4">
+                <InputLabel for="mobile" value="Mobile" />
+                <TextInput
+                    id="mobile"
+                    v-model="form.mobile"
+                    type="text"
+                    class="mt-1 block w-full"
+                    required
+                />
+                <InputError class="mt-2" :message="form.errors.mobile" />
             </div>
 
             <div class="mt-4">

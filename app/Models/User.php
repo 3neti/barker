@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\HasCampaigns;
+use App\Traits\HasMobile;
 use Bavix\Wallet\Traits\{CanConfirm, HasWallet, HasWalletFloat, HasWallets};
 use Bavix\Wallet\Interfaces\{Confirmable, Wallet, WalletFloat};
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -26,6 +27,7 @@ class User extends Authenticatable implements Confirmable, Wallet, WalletFloat
     use HasApiTokens;
     use Notifiable;
     use HasFactory;
+    use HasMobile;
     use HasTeams;
 //    use HasCampaigns;
 

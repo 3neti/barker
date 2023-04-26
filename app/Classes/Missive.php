@@ -36,16 +36,25 @@ class Missive implements JsonSerializable
     public $timing;
 
     /**
+     * The missive's type.
+     * e.g. accounting, authentication, authorization
+     *
+     * @var string
+     */
+    public $type;
+
+    /**
      * Create a new missive instance.
      *
      * @param  string  $key
      * @param  string  $text
      * @return void
      */
-    public function __construct(string $key, string $text)
+    public function __construct(string $key, string $text, Type $type = null)
     {
         $this->key = $key;
         $this->text = $text;
+        $this->type = $type;
     }
 
     /**
@@ -75,6 +84,19 @@ class Missive implements JsonSerializable
     }
 
     /**
+     * Type the missive.
+     *
+     * @param  string  $description
+     * @return $this
+     */
+    public function type(string $type)
+    {
+        $this->type = Barker::$types[$type];
+
+        return $this;
+    }
+
+    /**
      * Get the JSON serializable representation of the object.
      *
      * @return array
@@ -86,6 +108,7 @@ class Missive implements JsonSerializable
             'key' => $this->key,
             'text' => __($this->text),
             'description' => __($this->description),
+            'type' => $this->type,
         ];
     }
 }

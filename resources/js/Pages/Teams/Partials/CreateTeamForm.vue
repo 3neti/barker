@@ -8,6 +8,7 @@ import TextInput from '@/Components/TextInput.vue';
 
 const form = useForm({
     name: '',
+    alias: '',
 });
 
 const createTeam = () => {
@@ -54,6 +55,18 @@ const createTeam = () => {
                     autofocus
                 />
                 <InputError :message="form.errors.name" class="mt-2" />
+            </div>
+
+            <div class="col-span-6 sm:col-span-4">
+                <InputLabel for="alias" value="Team Alias" />
+                <TextInput
+                    id="name"
+                    v-model="form.alias"
+                    type="text"
+                    class="block w-full mt-1"
+                    autofocus
+                />
+                <InputError :message="form.errors.alias" class="mt-2" />
             </div>
         </template>
 

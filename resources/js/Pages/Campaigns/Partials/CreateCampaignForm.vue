@@ -11,13 +11,18 @@ import Checkbox from '@/Components/Checkbox.vue';
 
 const channels = ref([]);
 
+const chosenChannels = ref([]);
+const showRiders = ref(true);
+const showOTP = ref(true);
+
 const form = useForm({
     name: '',
     type: null,
-    mobile: null,
     email: usePage().props.auth.user.email,
+    mobile: usePage().props.auth.user.mobile,
     url: null,
     missives: {otp: false, instruction: "", rider: ""},
+    profiles: [],
 });
 
 const createCampaign = () => {
@@ -39,6 +44,24 @@ const availableRiders = computed(
     () => usePage().props.availableMissives['riders'],
 );
 
+const availableProfiles = computed(
+    () => usePage().props.availableProfiles,
+);
+
+const chooseInstruction = (missive) => {
+    let teamName = usePage().props.auth.user.current_team.alias
+        ? usePage().props.auth.user.current_team.alias
+        : usePage().props.auth.user.current_team.name;
+    form.name = teamName + ' - ' + missive.key;
+    form.missives.instruction = missive.text;
+    form.type = missive.type.key;
+    channels.value = missive.type.channels;
+}
+
+const checkProfile = (key) => {
+
+}
+
 </script>
 
 <template>
@@ -49,6 +72,8 @@ const availableRiders = computed(
 
         <template #description>
             Create a new campaign...
+            <p/>
+            {{ form.profiles }}
         </template>
 
         <template #form>
@@ -78,11 +103,136 @@ const availableRiders = computed(
                     type="text"
                     class="block w-full mt-1"
                     autofocus
+                    placeholder="input campaign name here..."
                 />
                 <InputError :message="form.errors.name" class="mt-2" />
 
-                <!-- Campaign Type -->
-                <InputLabel for="type" value="Type" />
+                <!-- Template Instructions -->
+                <InputLabel for="instructions" value="Instruction Templates" />
+                <div class="relative z-0 mt-1 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer">
+                    <button
+                        v-for="(missive, , index) in availableInstructions"
+                        :key="missive.key"
+                        type="button"
+                        class="relative px-4 py-3 inline-flex w-full rounded-lg focus:z-10 focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-600"
+                        :class="{'border-t border-gray-200 dark:border-gray-700 focus:border-none rounded-t-none': index > 0, 'rounded-b-none': index !== Object.keys(availableInstructions).length - 1}"
+                        @click="chooseInstruction(missive)"
+                    >
+                        <div :class="{'opacity-50': form.missives.instruction && form.missives.instruction !== missive.text}">
+                            <!-- Instruction Key -->
+                            <div class="flex items-center">
+                                <div class="text-sm text-gray-600 dark:text-gray-400" :class="{'font-semibold': form.missives.instruction === missive.text}">
+                                    {{ missive.key }}
+                                </div>
+
+                                <svg v-if="form.missives.instruction === missive.text" class="ml-2 h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <!-- Instruction Text -->
+                            <div class="mt-2 text-xs text-gray-600 dark:text-gray-400 text-left">
+                                {{ missive.description }}
+                            </div>
+                        </div>
+                    </button>
+                </div>
+                <textarea
+                    id="instruction"
+                    type="text"
+                    v-model="form.missives.instruction"
+                    rows="3"
+                    class="block w-full mt-1 border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                    autofocus
+                    placeholder="input instructions here..."
+                />
+
+                <!-- Profiles -->
+                <SectionBorder />
+                <InputLabel value="Profiles" />
+                <div class="relative z-0 mt-1 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer">
+                    <ul>
+                        <template v-for="(profile, key, index) in availableProfiles">
+                            <li class="w-full border-b border-gray-200 rounded-t-lg dark:border-gray-600">
+                                <div class="flex items-center pl-3">
+                                    <input v-model="form.profiles" :id="profile.key.concat(index)" type="checkbox" :value="key" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                                    <label :for="profile.key.concat(index)" class="w-full py-3 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{ key }}</label>
+                                </div>
+                                <div class="ml-2 text-sm">
+                                    <label :for="profile.key.concat(index)" class="font-medium text-gray-900 dark:text-gray-300">{{ profile.description }}</label>
+                                    <p class="text-xs font-normal text-gray-500 dark:text-gray-300">options: {{ profile.options.map(d => `"${d}"`).join([separator = ' | ']) }}</p>
+                                </div>
+                            </li>
+                        </template>
+                    </ul>
+                </div>
+
+                <!-- Missives -->
+                <SectionBorder />
+                <!-- Riders -->
+                <div v-show="showRiders">
+                    <InputLabel for="riders" value="SMS Rider" />
+                    <div class="relative z-0 mt-1 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer">
+                        <button
+                            v-for="(missive, , index) in availableRiders"
+                            :key="missive.key"
+                            type="button"
+                            class="relative px-4 py-3 inline-flex w-full rounded-lg focus:z-10 focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-600"
+                            :class="{'border-t border-gray-200 dark:border-gray-700 focus:border-none rounded-t-none': index > 0, 'rounded-b-none': index != Object.keys(availableRiders).length - 1}"
+                            @click="form.missives.rider = missive.text"
+                        >
+
+                            <div :class="{'opacity-50': form.missives.rider && form.missives.rider != missive.text}">
+                                <!-- Rider Key -->
+                                <div class="flex items-center">
+                                    <div class="text-sm text-gray-600 dark:text-gray-400" :class="{'font-semibold': form.missives.rider == missive.text}">
+                                        {{ missive.key }}
+                                    </div>
+
+                                    <svg v-if="form.missives.rider == missive.text" class="ml-2 h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+
+                                <!-- Rider Description -->
+                                <div class="mt-2 text-xs text-gray-600 dark:text-gray-400 text-left">
+                                    {{ missive.description }}
+                                </div>
+
+                                <!-- Rider Text -->
+                                <div class="mt-2 text-xs text-gray-600 dark:text-gray-400 text-left">
+                                    <i>
+                                        "{{ missive.text }}"
+                                    </i>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                    <textarea
+                        id="instructions"
+                        type="text"
+                        v-model="form.missives.rider"
+                        rows="3"
+                        class="block w-full mt-1 border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                        autofocus
+                        placeholder="input sms rider here..."
+                    />
+                </div>
+                <SectionBorder />
+                <!-- OTP -->
+                <div v-show="showOTP">
+
+
+                    <div class="flex items-start mb-6">
+                        <div class="flex items-center h-5">
+                            <Checkbox id="otp" v-model="form.missives.otp" :checked="form.missives.otp" class="w-4 h-4"/>
+                        </div>
+                        <InputLabel for="otp" value="Send OTP" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"/>
+                    </div>
+                </div>
+
+                <!-- Data Usage | Campaign Type -->
+                <SectionBorder />
+                <InputLabel for="type" value="Data Usage" />
                 <div class="relative z-0 mt-1 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer">
                     <button
                         v-for="(type, i) in availableTypes"
@@ -90,7 +240,7 @@ const availableRiders = computed(
                         type="button"
                         class="relative px-4 py-3 inline-flex w-full rounded-lg focus:z-10 focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-600"
                         :class="{'border-t border-gray-200 dark:border-gray-700 focus:border-none rounded-t-none': i > 0, 'rounded-b-none': i != Object.keys(availableTypes).length - 1}"
-                        @click="form.type = type.key; channels.value = type.channels"
+                        @click="form.type = type.key; channels = type.channels; chosenChannels = type.channels"
                     >
                         <div :class="{'opacity-50': form.type && form.type != type.key}">
                             <!-- Type Name -->
@@ -111,143 +261,60 @@ const availableRiders = computed(
 
                             <!-- Type Channels -->
                             <div class="mt-2 text-xs text-gray-600 dark:text-gray-400 text-left">
-                                {{ type.channels }}
+                                transmit via: {{ type.channels.join([separator = ', ']) }}
                             </div>
                         </div>
                     </button>
                 </div>
                 <InputError :message="form.errors.type" class="mt-2" />
-
-                <!-- Channels -->
-                <template v-if="channels.value">
-                    <SectionBorder />
-                    <!-- Email Channel -->
-                    <template v-if="channels.value?.includes('email')">
-                        <InputLabel for="email" value="Send Data to Email" />
+                <!-- Email Channel -->
+                <div v-show="channels?.includes('email')">
+                    <div class="flex">
+                        <span class="inline-flex items-center px-3 text-sm block font-medium text-sm text-gray-700 dark:text-gray-300">........email</span>
                         <TextInput
                             id="email"
                             v-model="form.email"
                             type="text"
                             class="block w-full mt-1"
                             autofocus
-                            placeholder="john.doe@email.com"
+                            placeholder="input email address here..."
+                            :disabled="!channels?.includes('email')"
                         />
                         <InputError :message="form.errors.email" class="mt-2" />
-                    </template>
-
-                    <!-- Mobile Channel -->
-                    <template v-if="channels.value?.includes('mobile')">
-                        <InputLabel for="mobile" value="Send Data to Mobile" />
+                    </div>
+                </div>
+                <!-- Mobile Channel -->
+                <div v-show="channels?.includes('mobile')">
+                    <div class="flex">
+                        <span class="inline-flex items-center px-3 text-sm block font-medium text-sm text-gray-700 dark:text-gray-300">.....mobile</span>
                         <TextInput
                             id="mobile"
                             v-model="form.mobile"
                             type="text"
                             class="block w-full mt-1"
                             autofocus
-                            placeholder="09173011987"
+                            placeholder="input mobile number here..."
+                            :disabled="!channels?.includes('mobile')"
                         />
                         <InputError :message="form.errors.mobile" class="mt-2" />
-                    </template>
-
-                    <!-- Webhook Channel -->
-                    <template v-if="channels.value?.includes('webhook')">
-                        <InputLabel for="url" value="Send Data to Webhook" />
+                    </div>
+                </div>
+                <!-- Webhook Channel -->
+                <div v-show="channels?.includes('webhook')">
+                    <div class="flex">
+                        <span class="inline-flex items-center px-3 text-sm block font-medium text-sm text-gray-700 dark:text-gray-300">webhook</span>
                         <TextInput
                             id="webhook"
                             v-model="form.url"
                             type="text"
                             class="block w-full mt-1"
                             autofocus
-                            placeholder="https://webhook.acme.com/result?secret=1234ABCD5678EFGH"
+                            placeholder="input webhook url here..."
+                            :disabled="!channels?.includes('webhook')"
                         />
                         <InputError :message="form.errors.url" class="mt-2" />
-                    </template>
-                </template>
-
-                <template v-if="channels.value?.includes('mobile')">
-                    <SectionBorder />
-                    <!-- Available Instructions -->
-                    <InputLabel for="instructions" value="Instruction" />
-                    <div class="relative z-0 mt-1 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer">
-                        <button
-                            v-for="(missive, i) in availableInstructions"
-                            :key="missive.key"
-                            type="button"
-                            class="relative px-4 py-3 inline-flex w-full rounded-lg focus:z-10 focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-600"
-                            :class="{'border-t border-gray-200 dark:border-gray-700 focus:border-none rounded-t-none': i > 0, 'rounded-b-none': i != Object.keys(availableInstructions).length - 1}"
-                            @click="form.missives.instruction = missive.text"
-                        >
-                            <div :class="{'opacity-50': form.missives.instruction && form.missives.instruction != missive.text}">
-                                <!-- Instruction Key -->
-                                <div class="flex items-center">
-                                    <div class="text-sm text-gray-600 dark:text-gray-400" :class="{'font-semibold': form.missives.instruction == missive.text}">
-                                        {{ missive.key }}
-                                    </div>
-
-                                    <svg v-if="form.missives.instruction == missive.text" class="ml-2 h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                </div>
-                                <!-- Instruction Text -->
-                                <div class="mt-2 text-xs text-gray-600 dark:text-gray-400 text-left">
-                                    {{ missive.text }}
-                                </div>
-                            </div>
-                        </button>
                     </div>
-                    <TextInput
-                        id="instruction"
-                        v-model="form.missives.instruction"
-                        type="text"
-                        class="block w-full mt-1"
-                        autofocus
-                        placeholder="Send instruction here."
-                    />
-
-                    <!-- Available Riders -->
-                    <InputLabel for="riders" value="Rider" />
-                    <div class="relative z-0 mt-1 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer">
-                        <button
-                            v-for="(missive, i) in availableRiders"
-                            :key="missive.key"
-                            type="button"
-                            class="relative px-4 py-3 inline-flex w-full rounded-lg focus:z-10 focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-600"
-                            :class="{'border-t border-gray-200 dark:border-gray-700 focus:border-none rounded-t-none': i > 0, 'rounded-b-none': i != Object.keys(availableRiders).length - 1}"
-                            @click="form.missives.rider = missive.text"
-                        >
-                            <div :class="{'opacity-50': form.missives.rider && form.missives.rider != missive.text}">
-                                <!-- Instruction Key -->
-                                <div class="flex items-center">
-                                    <div class="text-sm text-gray-600 dark:text-gray-400" :class="{'font-semibold': form.missives.rider == missive.text}">
-                                        {{ missive.key }}
-                                    </div>
-
-                                    <svg v-if="form.missives.rider == missive.text" class="ml-2 h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                </div>
-                                <!-- Instruction Text -->
-                                <div class="mt-2 text-xs text-gray-600 dark:text-gray-400 text-left">
-                                    {{ missive.text }}
-                                </div>
-                            </div>
-                        </button>
-                    </div>
-                    <TextInput
-                        id="instructions"
-                        v-model="form.missives.rider"
-                        type="text"
-                        class="block w-full mt-1"
-                        autofocus
-                        placeholder="Send rider here."
-                    />
-
-                    <SectionBorder />
-
-                    <!-- OTP -->
-                    <InputLabel for="otp" value="Send OTP" />
-                    <Checkbox id="otp" v-model="form.missives.otp" :checked="form.missives.otp"/>
-                </template>
+                </div>
             </div>
         </template>
 

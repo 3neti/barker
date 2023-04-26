@@ -15,5 +15,6 @@ class CampaignAdded
         public string $type,
         public ?array $channels = [],
         public ?array $missives = [],
+        public ?array $profiles = [],
     ){}
 }

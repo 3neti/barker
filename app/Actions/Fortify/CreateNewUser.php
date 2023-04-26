@@ -2,6 +2,7 @@
 
 namespace App\Actions\Fortify;
 
+use Propaganistas\LaravelPhone\Rules\Phone as PhoneRule;
 use Illuminate\Support\Facades\{DB, Hash, Validator};
 use Laravel\Fortify\Contracts\CreatesNewUsers;
 use App\Actions\Jetstream\AddTeamMember;
@@ -28,12 +29,14 @@ class CreateNewUser implements CreatesNewUsers
             'invite_code' => ['required', 'string', 'min:3', 'max:125','exists:invites,code'],
             'password' => $this->passwordRules(),
             'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature() ? ['accepted', 'required'] : '',
+            'mobile' => ['nullable', (new PhoneRule)->mobile()->country('PH', 'US', 'IN')],
         ])->validate();
 
         return DB::transaction(function () use ($input) {
             return tap(User::create([
                 'name' => $input['name'],
                 'email' => $input['email'],
+                'mobile' => $input['mobile'],
                 'password' => Hash::make($input['password']),
             ]), function (User $user) {
                 if (!$user->isSystem()) {

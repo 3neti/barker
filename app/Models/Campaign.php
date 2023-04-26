@@ -2,15 +2,15 @@
 
 namespace App\Models;
 
+use App\Traits\{HasCampaignItems, HasCampaignMissives, HasCampaignProfiles};
 use Illuminate\Database\Eloquent\Relations\{BelongsTo, BelongsToMany};
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Traits\{HasCampaignItems, HasCampaignMissives};
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
-
 class Campaign extends Model
 {
+    use HasCampaignProfiles;
     use HasCampaignMissives;
     use HasCampaignItems;
     use HasFactory;

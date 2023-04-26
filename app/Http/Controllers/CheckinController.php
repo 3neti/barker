@@ -39,7 +39,7 @@ class CheckinController extends Controller
         return Jetstream::inertia()->render($request, 'Checkins/Create', [
             'campaign' => $campaign = $request->user()->currentCampaign,
             'type' => $request->user()->currentTeam->campaignType($campaign),
-            'availableProfiles' => Barker::$profiles
+            'availableProfiles' => $campaign->profiles
         ]);
     }
 

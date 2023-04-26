@@ -11,7 +11,7 @@ use Laravel\Jetstream\Contracts\UpdatesTeamNames;
 class UpdateTeamName implements UpdatesTeamNames
 {
     /**
-     * Validate and update the given team's name.
+     * Validate and update the given team's name and alias.
      *
      * @param  array<string, string>  $input
      */
@@ -21,10 +21,12 @@ class UpdateTeamName implements UpdatesTeamNames
 
         Validator::make($input, [
             'name' => ['required', 'string', 'max:255'],
+            'alias' => ['nullable', 'string', 'max:12'],
         ])->validateWithBag('updateTeamName');
 
         $team->forceFill([
             'name' => $input['name'],
+            'alias' => $input['alias'],
         ])->save();
     }
 }
