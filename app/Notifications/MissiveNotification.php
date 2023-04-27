@@ -10,7 +10,7 @@ use App\Models\CampaignMissive;
 use Illuminate\Bus\Queueable;
 use App\Models\Checkin;
 
-class MissiveNotification extends Notification
+class MissiveNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -18,7 +18,7 @@ class MissiveNotification extends Notification
 
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['engage_spark', 'database'];
     }
 
     #[ArrayShape(['route' => "mixed", 'message' => "string"])]

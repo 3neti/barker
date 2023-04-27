@@ -72,6 +72,7 @@ class CheckinController extends Controller
             'selfieChecks' => $checkin?->data?->getSelfieChecks(),
             'idImageUrl' => $checkin?->data?->getIdImageUrl(),
             'selfieImageUrl' => $checkin?->data?->getSelfieImageUrl(),
+            'type' => auth()->user()->currentTeam->campaignType($checkin?->campaign),
         ]);
     }
 

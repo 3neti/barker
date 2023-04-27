@@ -11,6 +11,7 @@ defineProps({
     fieldsExtracted: Array,
     idImageUrl: String,
     selfieImageUrl: String,
+    type: Object,
 });
 
 const page = usePage()
@@ -38,7 +39,7 @@ Echo.private(`checkin.${page.props.checkin.uuid}`)
                     <Profile :checkin="checkin" :fieldsExtracted="fieldsExtracted" :idImageUrl="idImageUrl" :selfieImageUrl="selfieImageUrl"/>
                 </template>
                 <template v-else>
-                    <QRCode :checkin="checkin" />
+                    <QRCode :checkin="checkin" :type="type.key"/>
                 </template>
                 <SectionBorder />
             </div>

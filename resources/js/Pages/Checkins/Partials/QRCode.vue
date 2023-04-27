@@ -4,7 +4,8 @@ import ActionSection from '@/Components/ActionSection.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 
 const props = defineProps({
-    checkin: Object
+    checkin: Object,
+    type: String,
 });
 
 </script>
@@ -12,11 +13,11 @@ const props = defineProps({
 <template>
     <ActionSection>
         <template #title>
-            KwYC Check
+            {{ $page.props.checkin.campaign.name }}
         </template>
 
         <template #description>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Habitasse platea dictumst vestibulum rhoncus est pellentesque elit. Tempus urna et pharetra pharetra. Tortor id aliquet lectus proin.
+            {{ type }}
         </template>
 
         <template #content>
@@ -37,11 +38,20 @@ const props = defineProps({
             </div>
 
             <div class="mt-5">
-                <div>
+                <template v-if="checkin.QRCodeURI">
                     <SecondaryButton type="button" @click="router.get(route('checkins.index'))">
                         List
                     </SecondaryButton>
-                </div>
+                </template>
+                <template v-else>
+                    <SecondaryButton type="button" @click="router.post(route('generate-url', {transactionId: checkin.uuid}))">
+                        Retry
+                    </SecondaryButton>
+                </template>
+<!--                <div class="flex flex-row space-x-2">-->
+<!--            -->
+<!--         -->
+<!--                </div>-->
             </div>
         </template>
     </ActionSection>

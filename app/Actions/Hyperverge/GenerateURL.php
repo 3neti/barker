@@ -5,6 +5,7 @@ namespace App\Actions\Hyperverge;
 use App\Events\{CheckinAdded, Hyperverge\URLGenerated};
 use Lorisleiva\Actions\Concerns\AsAction;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Http\Request;
 use App\Classes\Hyperverge;
 
 class GenerateURL
@@ -33,5 +34,10 @@ class GenerateURL
     public function asListener(CheckinAdded $event)
     {
         self::dispatch($event->checkin->uuid);
+    }
+
+    public function asController(Request $request)
+    {
+        self::dispatch($request->get('transactionId'));
     }
 }

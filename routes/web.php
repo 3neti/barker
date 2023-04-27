@@ -4,6 +4,7 @@ use App\Http\Controllers\CurrentCampaignController;
 use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\CheckinController;
 use App\Http\Controllers\ContactController;
+use App\Actions\Hyperverge\GenerateURL;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -41,6 +42,7 @@ Route::middleware([
     Route::put('/current-campaign', [CurrentCampaignController::class, 'update'])->name('current-campaign.update');
     Route::resource('checkins', CheckinController::class)
         ->only(['index', 'create', 'store', 'show']);
+    Route::post('/generate-url', GenerateURL::class)->name('generate-url');
 });
 
 Route::webhooks('webhook-paynamics-paybiz', 'paynamics-paybiz');

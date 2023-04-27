@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Campaign;
+use App\Notifications\NewCampaignNotification;
 
 class CampaignObserver
 {
@@ -11,7 +12,7 @@ class CampaignObserver
      */
     public function created(Campaign $campaign): void
     {
-
+        $campaign->owner->notify(new NewCampaignNotification($campaign));
     }
 
 
